@@ -27,8 +27,10 @@ configurations {
 
 dependencies {
 	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	// To deploy on heroku
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'com.cedarsoftware:json-io:4.12.0'
+	implementation 'com.github.jsimone:webapp-runner:9.0.27.1'
 	implementation 'com.google.guava:guava:30.0-jre'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation fileTree('lib')
@@ -61,4 +63,24 @@ task createProperties(dependsOn: processResources) {
 
 classes {
     dependsOn createProperties
+}
+
+// To deploy on heroku
+task stage() {
+    dependsOn clean, bootWar
+}
+
+bootWar {
+	mustRunAfter clean
+}
+
+task copyToLib(type: Copy) {
+    into "$buildDir/server"
+    from(configurations.compileClasspath) {
+        include "webapp-runner*"
+    }
+}
+
+stage {
+	dependsOn copyToLib
 }
