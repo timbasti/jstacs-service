@@ -68,14 +68,14 @@ classes {
 }
 
 // To deploy on heroku
-task stage(type: Copy, dependsOn: [clean, build]) {
+task stage(type: Copy, dependsOn: [clean, bootJar]) {
     from jar.archivePath
     into project.rootDir 
     rename {
         'app.jar'
     }
+    mustRunAfter clean
 }
-stage.mustRunAfter(clean)
 
 clean {
     doLast {
