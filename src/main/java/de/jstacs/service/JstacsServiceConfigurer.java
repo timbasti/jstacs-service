@@ -9,9 +9,11 @@ public class JstacsServiceConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/test").allowedOrigins("http://localhost:3000", "https://jstacs-service.herokuapp.com/",
-                "https://jstacs-online.herokuapp.com/").allowedMethods("GET", "POST");
-        registry.addMapping("/").allowedOrigins("http://localhost:3000", "https://jstacs-service.herokuapp.com/",
-                "https://jstacs-online.herokuapp.com/").allowedMethods("GET");
+        String[] origins = new String[] { "http://localhost:3000", "https://jstacs-online.herokuapp.com" };
+        String[] headers = new String[] { "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
+                "Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin", "Cache-Control",
+                "Content-Type" };
+        registry.addMapping("/test").allowedOrigins(origins).allowedMethods("GET", "POST").allowedHeaders(headers);
+        registry.addMapping("/").allowedOrigins(origins).allowedMethods("GET").allowedHeaders(headers);
     }
 }
