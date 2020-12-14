@@ -68,6 +68,11 @@ classes {
 }
 
 // To deploy on heroku
+task stage(dependsOn: ['build', 'clean'])
+build {
+    mustRunAfter clean
+}
+
 /*
 task stage() {
     dependsOn clean, bootWar
