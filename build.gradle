@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'de.jstacs'
-version = '1.0.0'
+version = '1.0.0-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
@@ -27,13 +27,15 @@ configurations {
 
 dependencies {
 	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-	// To deploy on heroku
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'com.cedarsoftware:json-io:4.12.0'
-	implementation 'com.github.jsimone:webapp-runner:9.0.27.1'
+
+	// To deploy on heroku
+	// implementation 'com.github.jsimone:webapp-runner:9.0.27.1'
+
 	implementation 'com.google.guava:guava:30.0-jre'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation fileTree('lib')
+	implementation fileTree('lib') {include '*.jar'}
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
@@ -66,6 +68,7 @@ classes {
 }
 
 // To deploy on heroku
+/*
 task stage() {
     dependsOn clean, bootWar
 }
@@ -84,3 +87,4 @@ task copyToLib(type: Copy) {
 stage {
 	dependsOn copyToLib
 }
+*/

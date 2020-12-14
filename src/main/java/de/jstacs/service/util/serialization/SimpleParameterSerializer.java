@@ -9,16 +9,13 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import org.springframework.boot.jackson.JsonComponent;
 
 import de.jstacs.DataType;
-import de.jstacs.parameters.Parameter;
+import de.jstacs.parameters.SimpleParameter;
 
 @JsonComponent
-public class ParameterSerializer extends JsonSerializer<Parameter> {
+public class SimpleParameterSerializer extends JsonSerializer<SimpleParameter> {
 
-    /**
-     * Contains only serialization for SimpleParameter for now.
-     */
     @Override
-    public void serialize(Parameter parameter, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+    public void serialize(SimpleParameter parameter, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
             throws IOException {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("type", parameter.getClass().getTypeName());

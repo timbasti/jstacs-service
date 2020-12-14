@@ -12,12 +12,10 @@ import com.fasterxml.jackson.databind.node.TextNode;
 
 import org.springframework.boot.jackson.JsonComponent;
 
-import de.jstacs.parameters.FileParameter;
-import de.jstacs.parameters.Parameter;
-import de.jstacs.parameters.SimpleParameter;
+import de.jstacs.parameters.FileParameter.FileRepresentation;
 
 @JsonComponent
-public class ParameterDeserializer extends JsonDeserializer<Parameter> {
+public class FileReprensentationDeserializer extends JsonDeserializer<FileRepresentation> {
 
     private ObjectMapper objectMapper;
 
@@ -26,20 +24,14 @@ public class ParameterDeserializer extends JsonDeserializer<Parameter> {
     }
 
     @Override
-    public Parameter deserialize(JsonParser jsonParser, DeserializationContext context)
+    public FileRepresentation deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
 
         TreeNode treeNode = objectMapper.readTree(jsonParser);
-        TextNode parameterTypeNode = (TextNode) treeNode.get("type");
+        TextNode contentNode = (TextNode) treeNode.get("content");
+        TextNode fileNameNode = (TextNode) treeNode.get("fileName");
 
-        switch (parameterTypeNode.asText()) {
-            case "de.jstacs.parameters.SimpleParameter":
-                return objectMapper.readValue(treeNode.toString(), SimpleParameter.class);
-            case "de.jstacs.parameters.FileParameter":
-                return objectMapper.readValue(treeNode.toString(), FileParameter.class);
-            default:
-                return null;
-        }
+        return new FileRepresentation(contentNode.asText(), fileNameNode.asText());
 
     }
 
