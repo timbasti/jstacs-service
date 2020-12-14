@@ -31,7 +31,7 @@ public class FileReprensentationDeserializer extends JsonDeserializer<FileRepres
         TextNode contentNode = (TextNode) treeNode.get("content");
         TextNode fileNameNode = (TextNode) treeNode.get("fileName");
 
-        return new FileRepresentation(contentNode.asText(), fileNameNode.asText());
+        return new FileRepresentation(fileNameNode.asText(), contentNode.asText());
 
     }
 
