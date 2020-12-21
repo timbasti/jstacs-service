@@ -13,7 +13,14 @@ public class JstacsServiceConfigurer implements WebMvcConfigurer {
         String[] headers = new String[] { "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
                 "Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin", "Cache-Control",
                 "Content-Type" };
-        registry.addMapping("/test").allowedOrigins(origins).allowedMethods("GET", "POST").allowedHeaders(headers);
-        registry.addMapping("/").allowedOrigins(origins).allowedMethods("GET").allowedHeaders(headers);
+        registry.addMapping("/files").allowedOrigins(origins).allowedMethods("OPTIONS", "HEAD", "POST")
+                .allowedHeaders(headers);
+        registry.addMapping("/files/{filename:.+}").allowedOrigins(origins).allowedMethods("OPTIONS", "HEAD", "GET")
+                .allowedHeaders(headers);
+        registry.addMapping("/test").allowedOrigins(origins).allowedMethods("OPTIONS", "HEAD", "GET", "POST")
+                .allowedHeaders(headers);
+        registry.addMapping("/").allowedOrigins(origins).allowedMethods("OPTIONS", "HEAD", "GET")
+                .allowedHeaders(headers);
     }
+
 }

@@ -13,11 +13,17 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import org.springframework.boot.jackson.JsonComponent;
 
 import de.jstacs.parameters.FileParameter.FileRepresentation;
+import de.jstacs.service.storage.FileSystemStorageService;
 
 @JsonComponent
 public class FileReprensentationDeserializer extends JsonDeserializer<FileRepresentation> {
 
     private ObjectMapper objectMapper;
+    private final FileSystemStorageService storageService;
+
+    public FileReprensentationDeserializer(FileSystemStorageService storageService) {
+        this.storageService = storageService;
+    }
 
     public void setObjectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
@@ -26,12 +32,11 @@ public class FileReprensentationDeserializer extends JsonDeserializer<FileRepres
     @Override
     public FileRepresentation deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
-
         TreeNode treeNode = objectMapper.readTree(jsonParser);
-        TextNode contentNode = (TextNode) treeNode.get("content");
         TextNode fileNameNode = (TextNode) treeNode.get("fileName");
-
-        return new FileRepresentation(fileNameNode.asText(), contentNode.asText());
+        String fileName = fileNameNode.asText();
+        String absoluteFilePath = storageService.resolveFilePath(fileName);
+        return new FileRepresentation(absoluteFilePath);
 
     }
 

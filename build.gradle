@@ -29,11 +29,8 @@ dependencies {
 	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'com.cedarsoftware:json-io:4.12.0'
-
-	// To deploy on heroku
-	// implementation 'com.github.jsimone:webapp-runner:9.0.27.1'
-
 	implementation 'com.google.guava:guava:30.0-jre'
+    implementation 'org.apache.tika:tika-core:1.25'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation fileTree('lib') {include '*.jar'}
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
@@ -82,24 +79,3 @@ clean {
         project.file('app.jar').delete()
     }
 }
-
-/*
-task stage() {
-    dependsOn clean, bootWar
-}
-
-bootWar {
-	mustRunAfter clean
-}
-
-task copyToLib(type: Copy) {
-    into "$buildDir/server"
-    from(configurations.compileClasspath) {
-        include "webapp-runner*"
-    }
-}
-
-stage {
-	dependsOn copyToLib
-}
-*/

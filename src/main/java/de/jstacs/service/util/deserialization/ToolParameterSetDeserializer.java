@@ -12,16 +12,25 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonComponent;
 
 import de.jstacs.parameters.FileParameter;
 import de.jstacs.parameters.Parameter;
 import de.jstacs.parameters.SimpleParameter;
 import de.jstacs.parameters.FileParameter.FileRepresentation;
+import de.jstacs.service.storage.FileSystemStorageService;
 import de.jstacs.tools.ToolParameterSet;
 
 @JsonComponent
 public class ToolParameterSetDeserializer extends JsonDeserializer<ToolParameterSet> {
+
+    private final FileSystemStorageService storageService;
+
+    @Autowired
+    public ToolParameterSetDeserializer(FileSystemStorageService storageService) {
+        this.storageService = storageService;
+    }
 
     @Override
     public ToolParameterSet deserialize(JsonParser jsonParser, DeserializationContext context)
@@ -33,7 +42,7 @@ public class ToolParameterSetDeserializer extends JsonDeserializer<ToolParameter
         ParameterDeserializer parameterDeserializer = new ParameterDeserializer();
         SimpleParameterDeserializer simpleParameterDeserializer = new SimpleParameterDeserializer();
         FileParameterDeserializer fileParameterDeserializer = new FileParameterDeserializer();
-        FileReprensentationDeserializer fileReprensentationDeserializer = new FileReprensentationDeserializer();
+        FileReprensentationDeserializer fileReprensentationDeserializer = new FileReprensentationDeserializer(storageService);
 
         module.addDeserializer(Parameter.class, parameterDeserializer);
         module.addDeserializer(SimpleParameter.class, simpleParameterDeserializer);
