@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -18,6 +18,7 @@ import org.springframework.boot.jackson.JsonComponent;
 import de.jstacs.parameters.FileParameter;
 import de.jstacs.parameters.Parameter;
 import de.jstacs.parameters.SimpleParameter;
+import de.jstacs.parameters.SimpleParameterSet;
 import de.jstacs.parameters.FileParameter.FileRepresentation;
 import de.jstacs.service.storage.FileSystemStorageService;
 import de.jstacs.tools.ToolParameterSet;
@@ -43,11 +44,13 @@ public class ToolParameterSetDeserializer extends JsonDeserializer<ToolParameter
         SimpleParameterDeserializer simpleParameterDeserializer = new SimpleParameterDeserializer();
         FileParameterDeserializer fileParameterDeserializer = new FileParameterDeserializer();
         FileReprensentationDeserializer fileReprensentationDeserializer = new FileReprensentationDeserializer(storageService);
+        SimpleParameterSetDeserializer simpleParameterSetDeserializer = new SimpleParameterSetDeserializer();
 
         module.addDeserializer(Parameter.class, parameterDeserializer);
         module.addDeserializer(SimpleParameter.class, simpleParameterDeserializer);
         module.addDeserializer(FileParameter.class, fileParameterDeserializer);
         module.addDeserializer(FileRepresentation.class, fileReprensentationDeserializer);
+        module.addDeserializer(SimpleParameterSet.class, simpleParameterSetDeserializer);
 
         objectMapper.registerModule(module);
 
@@ -55,10 +58,11 @@ public class ToolParameterSetDeserializer extends JsonDeserializer<ToolParameter
         simpleParameterDeserializer.setObjectMapper(objectMapper);
         fileParameterDeserializer.setObjectMapper(objectMapper);
         fileReprensentationDeserializer.setObjectMapper(objectMapper);
+        simpleParameterSetDeserializer.setObjectMapper(objectMapper);
 
-        TreeNode treeNode = objectMapper.readTree(jsonParser);
-        TextNode nameNode = (TextNode) treeNode.get("toolName");
-        ArrayNode parametersNode = (ArrayNode) treeNode.get("parameters");
+        JsonNode jsonNode = objectMapper.readTree(jsonParser);
+        TextNode nameNode = (TextNode) jsonNode.get("toolName");
+        ArrayNode parametersNode = (ArrayNode) jsonNode.get("parameters");
 
         Parameter[] parameters = objectMapper.readValue(parametersNode.toString(), Parameter[].class);
         ToolParameterSet toolParameterSet = new ToolParameterSet(nameNode.asText(), parameters);

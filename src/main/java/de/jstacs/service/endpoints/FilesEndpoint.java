@@ -1,9 +1,8 @@
 package de.jstacs.service.endpoints;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ public class FilesEndpoint {
 
     @PostMapping()
     public Map<String, String> setFileParameterContent(@RequestParam("file") MultipartFile file) throws IOException {
-        Map<String, String> response = Maps.newHashMap();
+        Map<String, String> response = new HashMap<String, String>();
         String fileName = storageService.store(file);
         response.put("fileName", fileName);
         return response;

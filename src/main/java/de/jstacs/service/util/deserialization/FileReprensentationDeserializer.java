@@ -37,7 +37,6 @@ public class FileReprensentationDeserializer extends JsonDeserializer<FileRepres
         String fileName = fileNameNode.asText();
         String absoluteFilePath = storageService.resolveFilePath(fileName);
         return new FileRepresentation(absoluteFilePath);
-
     }
 
 }

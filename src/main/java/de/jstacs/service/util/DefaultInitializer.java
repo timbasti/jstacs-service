@@ -1,6 +1,5 @@
 package de.jstacs.service.util;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
@@ -9,8 +8,12 @@ import de.jstacs.DataType;
 import de.jstacs.tools.ToolParameterSet;
 import de.jstacs.parameters.FileParameter;
 import de.jstacs.parameters.Parameter;
+import de.jstacs.parameters.SelectionParameter;
 import de.jstacs.parameters.SimpleParameter;
+import de.jstacs.parameters.SimpleParameterSet;
 import de.jstacs.parameters.FileParameter.FileRepresentation;
+import de.jstacs.parameters.validation.NumberValidator;
+import de.jstacs.parameters.validation.RegExpValidator;
 import de.jstacs.service.storage.FileSystemStorageService;
 
 @Component
@@ -25,21 +28,24 @@ public class DefaultInitializer {
 
     public ToolParameterSet initializeDefaultToolParameterSet() throws Exception {
         Parameter stringParameter = new SimpleParameter(DataType.STRING, "String Parameter", "Parameter to set a text",
-                true, "Hello parameter");
+                true, new RegExpValidator("Hello.*"), "Hello parameter");
         Parameter charParameter = new SimpleParameter(DataType.CHAR, "Char Parameter", "Parameter to set a character",
-                true, 'T');
+                true, Character.valueOf('T'));
         Parameter byteParameter = new SimpleParameter(DataType.BYTE, "Byte Parameter", "Parameter to set a byte", true,
-                Byte.parseByte("20"));
+                new NumberValidator<Byte>((byte) -4, (byte) 24), (byte) 20);
         Parameter shortParameter = new SimpleParameter(DataType.SHORT, "Short Parameter", "Parameter to set a short",
-                true, Short.parseShort("2345"));
+                true, new NumberValidator<Short>((short) -2350, (short) 2350), (short) 2345);
         Parameter intParameter = new SimpleParameter(DataType.INT, "Int Parameter", "Parameter to set an int", true,
-                Integer.parseInt("324423555"));
+                new NumberValidator<Integer>(-324423560, 324423560), 324423555);
         Parameter longParameter = new SimpleParameter(DataType.LONG, "Long Parameter", "Parameter to set a long", true,
+                new NumberValidator<Long>(Long.parseLong("-2345462565436537"), Long.parseLong("2345462565436540")),
                 Long.parseLong("2345462565436537"));
         Parameter floatParameter = new SimpleParameter(DataType.FLOAT, "Float Parameter", "Parameter to set a float",
-                true, Float.parseFloat("1.2432"));
+                true, new NumberValidator<Float>((float) -1.2432, (float) 1.2440), (float) 1.2432);
         Parameter doubleParameter = new SimpleParameter(DataType.DOUBLE, "Double Parameter",
-                "Parameter to set a double", true, Double.parseDouble("1.23435436256547546765487687659"));
+                "Parameter to set a double", true,
+                new NumberValidator<Double>(-2.23435436256547546765487687659, 2.23435436256547546765487687659),
+                1.23435436256547546765487687659);
         Parameter boolParameter = new SimpleParameter(DataType.BOOLEAN, "Boolean Parameter", "Parameter to set a bool",
                 true, false);
         Parameter fileParameter = new FileParameter("File Parameter", "Parameter to set a file",
@@ -54,7 +60,16 @@ public class DefaultInitializer {
         String nextAbsoluteFilePath = storageService.resolveFilePath(nextFileName);
         FileRepresentation nextFileRepresentation = new FileRepresentation(nextAbsoluteFilePath);
         nextFileParameter.setDefault(nextFileRepresentation);
-        return new ToolParameterSet("Simple Tool", fileParameter, nextFileParameter);
+
+        SimpleParameterSet ps1 = new SimpleParameterSet(
+                new SimpleParameter(DataType.INT, "int parameter", "some int parameter", true),
+                new SimpleParameter(DataType.STRING, "string parameter", "some string parameter", true));
+        SimpleParameterSet ps2 = new SimpleParameterSet(
+                new SimpleParameter(DataType.DOUBLE, "double parameter", "some double parameter", true));
+        SelectionParameter sp = new SelectionParameter(DataType.PARAMETERSET, new String[] { "option 1", "option 2" },
+                new Object[] { ps1, ps2 }, "selection", "select something", true);
+        return new ToolParameterSet("Simple Tool", charParameter, stringParameter, byteParameter, shortParameter,
+                intParameter, longParameter, floatParameter, doubleParameter, boolParameter, sp);
     }
 
 }
