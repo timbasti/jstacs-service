@@ -34,6 +34,7 @@ public class SelectionParameterSerializer extends JsonSerializer<SelectionParame
         jsonGenerator.writeStringField("dataType", parameter.getDatatype().name());
         jsonGenerator.writeStringField("errorMessage", parameter.getErrorMessage());
         jsonGenerator.writeBooleanField("required", parameter.isRequired());
+        jsonGenerator.writeNumberField("selected", parameter.getSelected());
         this.writeTypeRelatedFields(parameter, jsonGenerator);
         jsonGenerator.writeEndObject();
     }

@@ -17,6 +17,7 @@ import org.springframework.boot.jackson.JsonComponent;
 
 import de.jstacs.parameters.FileParameter;
 import de.jstacs.parameters.Parameter;
+import de.jstacs.parameters.SelectionParameter;
 import de.jstacs.parameters.SimpleParameter;
 import de.jstacs.parameters.SimpleParameterSet;
 import de.jstacs.parameters.FileParameter.FileRepresentation;
@@ -45,12 +46,14 @@ public class ToolParameterSetDeserializer extends JsonDeserializer<ToolParameter
         FileParameterDeserializer fileParameterDeserializer = new FileParameterDeserializer();
         FileReprensentationDeserializer fileReprensentationDeserializer = new FileReprensentationDeserializer(storageService);
         SimpleParameterSetDeserializer simpleParameterSetDeserializer = new SimpleParameterSetDeserializer();
+        SelectionParameterDeserializer selectionParameterDeserializer = new SelectionParameterDeserializer();
 
         module.addDeserializer(Parameter.class, parameterDeserializer);
         module.addDeserializer(SimpleParameter.class, simpleParameterDeserializer);
         module.addDeserializer(FileParameter.class, fileParameterDeserializer);
         module.addDeserializer(FileRepresentation.class, fileReprensentationDeserializer);
         module.addDeserializer(SimpleParameterSet.class, simpleParameterSetDeserializer);
+        module.addDeserializer(SelectionParameter.class, selectionParameterDeserializer);
 
         objectMapper.registerModule(module);
 
@@ -59,6 +62,7 @@ public class ToolParameterSetDeserializer extends JsonDeserializer<ToolParameter
         fileParameterDeserializer.setObjectMapper(objectMapper);
         fileReprensentationDeserializer.setObjectMapper(objectMapper);
         simpleParameterSetDeserializer.setObjectMapper(objectMapper);
+        selectionParameterDeserializer.setObjectMapper(objectMapper);
 
         JsonNode jsonNode = objectMapper.readTree(jsonParser);
         TextNode nameNode = (TextNode) jsonNode.get("toolName");
