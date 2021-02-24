@@ -10,19 +10,17 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import org.springframework.boot.jackson.JsonComponent;
 
 import de.jstacs.DataType;
+import de.jstacs.parameters.Parameter;
+import de.jstacs.parameters.ParameterSet;
 import de.jstacs.parameters.SelectionParameter;
-import de.jstacs.parameters.SimpleParameter;
 import de.jstacs.parameters.SimpleParameterSet;
 import de.jstacs.parameters.AbstractSelectionParameter.InconsistentCollectionException;
 import de.jstacs.parameters.SimpleParameter.DatatypeNotValidException;
 import de.jstacs.parameters.SimpleParameter.IllegalValueException;
-import de.jstacs.parameters.validation.NumberValidator;
-import de.jstacs.parameters.validation.RegExpValidator;
 
 @JsonComponent
 public class SelectionParameterDeserializer extends JsonDeserializer<SelectionParameter> {
@@ -33,46 +31,65 @@ public class SelectionParameterDeserializer extends JsonDeserializer<SelectionPa
         this.objectMapper = objectMapper;
     }
 
-    /*
-     * comment: "select something" dataType: "PARAMETERSET" errorMessage: null name:
-     * "selection" parametersInCollection: [{type:
-     * "de.jstacs.parameters.SimpleParameterSet", errorMessage: null, parameters:
-     * [,…]},…] required: true type: "de.jstacs.parameters.SelectionParameter"
-     * value: "0"
-     */
-
     @Override
     public SelectionParameter deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
 
         JsonNode jsonNode = objectMapper.readTree(jsonParser);
-        JsonNode dataTypeNode = jsonNode.get("dataType");
         JsonNode nameNode = jsonNode.get("name");
+        JsonNode dataTypeNode = jsonNode.get("dataType");
         JsonNode commentNode = jsonNode.get("comment");
         JsonNode requiredNode = jsonNode.get("required");
-        JsonNode valueNode = jsonNode.get("value");
-        ArrayNode parametersInCollectionNode = (ArrayNode) jsonNode.get("parametersInCollection");
+        JsonNode selectedNameNode = jsonNode.get("selectedName");
+        JsonNode parametersInCollectionNode = jsonNode.get("parametersInCollection");
 
-        SimpleParameterSet[] parameters = objectMapper.readValue(parametersInCollectionNode.toString(),
-                SimpleParameterSet[].class);
+        String name = nameNode.textValue();
+        String dataType = dataTypeNode.textValue();
+        String comment = commentNode.textValue();
+        boolean required = requiredNode.booleanValue();
+        String selectedName = selectedNameNode.textValue();
 
-        List<String> selectionKeys = new ArrayList<>();
-        for (int i = 0; i < parameters.length; i++) {
-            selectionKeys.add(nameNode.asText() + '-' + i);
-        }
+        SimpleParameterSet simpleParameterSet = objectMapper.readValue(parametersInCollectionNode.toString(),
+                SimpleParameterSet.class);
+
+        Object[] values = selectValues(simpleParameterSet);
+        String[] keys = selectKeys(simpleParameterSet);
 
         try {
-            SelectionParameter selectionParameter = new SelectionParameter(DataType.valueOf(dataTypeNode.asText()),
-                    selectionKeys.toArray(new String[0]), parameters, nameNode.asText(), commentNode.asText(),
-                    requiredNode.asBoolean());
-            selectionParameter.setValue(nameNode.asText() + '-' + valueNode.asText());
+            SelectionParameter selectionParameter = new SelectionParameter(DataType.valueOf(dataType), keys, values,
+                    name, comment, required);
+            selectionParameter.setValue(selectedName);
             return selectionParameter;
-        } catch (InconsistentCollectionException | IllegalValueException | DatatypeNotValidException e) {
+        } catch (IllegalValueException | InconsistentCollectionException | DatatypeNotValidException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
         return null;
 
+    }
+
+    // TODO: Use Map<String, Object> and only one iteration ;-)
+    private Object[] selectValues(ParameterSet parameterSet) {
+        List<Object> values = new ArrayList<Object>();
+        int numberOfParameters = parameterSet.getNumberOfParameters();
+        for (int i = 0; i < numberOfParameters; i++) {
+            Parameter parameter = parameterSet.getParameterAt(i);
+            Object valueAtI = parameter.getValue();
+            values.add(valueAtI);
+        }
+        return values.toArray();
+    }
+
+    private String[] selectKeys(ParameterSet parameterSet) {
+        List<String> keys = new ArrayList<String>();
+        int numberOfParameters = parameterSet.getNumberOfParameters();
+        for (int i = 0; i < numberOfParameters; i++) {
+            Parameter parameter = parameterSet.getParameterAt(i);
+            String valueAtI = parameter.getName();
+            keys.add(valueAtI);
+        }
+        return keys.toArray(new String[] {});
     }
 
 }

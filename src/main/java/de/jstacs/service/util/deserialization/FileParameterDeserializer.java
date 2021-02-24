@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -31,7 +31,7 @@ public class FileParameterDeserializer extends JsonDeserializer<FileParameter> {
     public FileParameter deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
 
-        TreeNode treeNode = objectMapper.readTree(jsonParser);
+        JsonNode treeNode = objectMapper.readTree(jsonParser);
         TextNode nameNode = (TextNode) treeNode.get("name");
         TextNode commentNode = (TextNode) treeNode.get("comment");
         BooleanNode requiredNode = (BooleanNode) treeNode.get("required");
@@ -41,8 +41,8 @@ public class FileParameterDeserializer extends JsonDeserializer<FileParameter> {
         FileRepresentation fileRepresentation = objectMapper.readValue(fileContentsNode.toString(),
                 FileRepresentation.class);
 
-        FileParameter fileParameter = new FileParameter(nameNode.asText(), commentNode.asText(),
-                acceptedMimeTypeNode.asText(), requiredNode.asBoolean());
+        FileParameter fileParameter = new FileParameter(nameNode.textValue(), commentNode.textValue(),
+                acceptedMimeTypeNode.textValue(), requiredNode.asBoolean());
 
         try {
             fileParameter.setValue(fileRepresentation);

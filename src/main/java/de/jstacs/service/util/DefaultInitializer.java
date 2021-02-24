@@ -68,8 +68,11 @@ public class DefaultInitializer {
                 new SimpleParameter(DataType.DOUBLE, "double parameter", "some double parameter", true));
         SelectionParameter sp = new SelectionParameter(DataType.PARAMETERSET, new String[] { "selection-1", "selection-2" },
                 new Object[] { ps1, ps2 }, "selection", "select something", true);
+
+        SelectionParameter sp2 = new SelectionParameter(DataType.INT, new String[] { "selection-1", "selection-2" },
+                new Object[] { 12345, 67890 }, "selection2", "select something", true);
         return new ToolParameterSet("Simple Tool", charParameter, stringParameter, byteParameter, shortParameter,
-                intParameter, longParameter, floatParameter, doubleParameter, boolParameter, fileParameter, nextFileParameter, sp);
+                intParameter, longParameter, floatParameter, doubleParameter, boolParameter, fileParameter, nextFileParameter, sp, sp2);
     }
 
 }
