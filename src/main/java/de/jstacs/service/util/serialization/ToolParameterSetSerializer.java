@@ -20,6 +20,7 @@ public class ToolParameterSetSerializer extends JsonSerializer<ToolParameterSet>
         jsonGenerator.writeStringField("type", parameterSet.getClass().getTypeName());
         jsonGenerator.writeStringField("toolName", parameterSet.getToolName());
         jsonGenerator.writeStringField("errorMessage", parameterSet.getErrorMessage());
+        jsonGenerator.writeBooleanField("isAtomic", parameterSet.isAtomic());
         jsonGenerator.writeArrayFieldStart("parameters");
         int numberOfParameters = parameterSet.getNumberOfParameters();
         for (int i = 0; i < numberOfParameters; i++) {

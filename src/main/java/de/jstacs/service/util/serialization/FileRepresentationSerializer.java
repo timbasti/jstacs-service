@@ -28,7 +28,7 @@ public class FileRepresentationSerializer extends JsonSerializer<FileRepresentat
         String fileName = fileRepresentation.getFilename();
         String relativeFilePath = storageService.relativizeFilePath(fileName);
         jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField("fileName", relativeFilePath);
+        jsonGenerator.writeStringField("name", relativeFilePath);
         jsonGenerator.writeEndObject();
     }
 

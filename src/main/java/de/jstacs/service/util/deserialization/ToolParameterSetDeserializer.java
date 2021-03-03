@@ -17,6 +17,7 @@ import org.springframework.boot.jackson.JsonComponent;
 
 import de.jstacs.parameters.FileParameter;
 import de.jstacs.parameters.Parameter;
+import de.jstacs.parameters.ParameterSetContainer;
 import de.jstacs.parameters.SelectionParameter;
 import de.jstacs.parameters.SimpleParameter;
 import de.jstacs.parameters.SimpleParameterSet;
@@ -47,6 +48,7 @@ public class ToolParameterSetDeserializer extends JsonDeserializer<ToolParameter
         FileReprensentationDeserializer fileReprensentationDeserializer = new FileReprensentationDeserializer(storageService);
         SimpleParameterSetDeserializer simpleParameterSetDeserializer = new SimpleParameterSetDeserializer();
         SelectionParameterDeserializer selectionParameterDeserializer = new SelectionParameterDeserializer();
+        ParameterSetContainerDeserializer parameterSetContainerDeserializer = new ParameterSetContainerDeserializer();
 
         module.addDeserializer(Parameter.class, parameterDeserializer);
         module.addDeserializer(SimpleParameter.class, simpleParameterDeserializer);
@@ -54,6 +56,7 @@ public class ToolParameterSetDeserializer extends JsonDeserializer<ToolParameter
         module.addDeserializer(FileRepresentation.class, fileReprensentationDeserializer);
         module.addDeserializer(SimpleParameterSet.class, simpleParameterSetDeserializer);
         module.addDeserializer(SelectionParameter.class, selectionParameterDeserializer);
+        module.addDeserializer(ParameterSetContainer.class, parameterSetContainerDeserializer);
 
         objectMapper.registerModule(module);
 
@@ -63,13 +66,14 @@ public class ToolParameterSetDeserializer extends JsonDeserializer<ToolParameter
         fileReprensentationDeserializer.setObjectMapper(objectMapper);
         simpleParameterSetDeserializer.setObjectMapper(objectMapper);
         selectionParameterDeserializer.setObjectMapper(objectMapper);
+        parameterSetContainerDeserializer.setObjectMapper(objectMapper);
 
         JsonNode jsonNode = objectMapper.readTree(jsonParser);
         TextNode nameNode = (TextNode) jsonNode.get("toolName");
         ArrayNode parametersNode = (ArrayNode) jsonNode.get("parameters");
 
         Parameter[] parameters = objectMapper.readValue(parametersNode.toString(), Parameter[].class);
-        ToolParameterSet toolParameterSet = new ToolParameterSet(nameNode.asText(), parameters);
+        ToolParameterSet toolParameterSet = new ToolParameterSet(nameNode.textValue(), parameters);
 
         return toolParameterSet;
     }

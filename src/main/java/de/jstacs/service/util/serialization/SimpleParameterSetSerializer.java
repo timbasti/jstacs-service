@@ -15,10 +15,11 @@ import de.jstacs.parameters.SimpleParameterSet;
 public class SimpleParameterSetSerializer extends JsonSerializer<SimpleParameterSet> {
 
     @Override
-    public void serialize(SimpleParameterSet parameterSet, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
+    public void serialize(SimpleParameterSet parameterSet, JsonGenerator jsonGenerator, SerializerProvider serializers)
+            throws IOException {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("type", parameterSet.getClass().getTypeName());
-        jsonGenerator.writeStringField("errorMessage", parameterSet.getErrorMessage());
+        jsonGenerator.writeBooleanField("isAtomic", parameterSet.isAtomic());
         jsonGenerator.writeArrayFieldStart("parameters");
         int numberOfParameters = parameterSet.getNumberOfParameters();
         for (int i = 0; i < numberOfParameters; i++) {
@@ -28,5 +29,5 @@ public class SimpleParameterSetSerializer extends JsonSerializer<SimpleParameter
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
     }
-    
+
 }

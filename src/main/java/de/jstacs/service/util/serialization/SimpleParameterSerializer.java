@@ -1,13 +1,10 @@
 package de.jstacs.service.util.serialization;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.google.common.collect.Maps;
 
 import org.springframework.boot.jackson.JsonComponent;
 
@@ -30,6 +27,7 @@ public class SimpleParameterSerializer extends JsonSerializer<SimpleParameter> {
         jsonGenerator.writeStringField("dataType", parameter.getDatatype().name());
         jsonGenerator.writeStringField("errorMessage", parameter.getErrorMessage());
         jsonGenerator.writeBooleanField("required", parameter.isRequired());
+        jsonGenerator.writeBooleanField("isAtomic", parameter.isAtomic());
         this.writeTypeRelatedFields(parameter, jsonGenerator);
         jsonGenerator.writeEndObject();
     }

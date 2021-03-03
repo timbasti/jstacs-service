@@ -37,9 +37,9 @@ public class SimpleParameterDeserializer extends JsonDeserializer<SimpleParamete
         JsonNode commentNode = jsonNode.get("comment");
         JsonNode requiredNode = jsonNode.get("required");
         try {
-            SimpleParameter parameter = new SimpleParameter(DataType.valueOf(dataTypeNode.asText()), nameNode.asText(),
-                    commentNode.asText(), requiredNode.asBoolean());
-            this.readParameterValue(DataType.valueOf(dataTypeNode.asText()), parameter, jsonNode);
+            SimpleParameter parameter = new SimpleParameter(DataType.valueOf(dataTypeNode.textValue()), nameNode.textValue(),
+                    commentNode.textValue(), requiredNode.asBoolean());
+            this.readParameterValue(DataType.valueOf(dataTypeNode.textValue()), parameter, jsonNode);
             return parameter;
         } catch (DatatypeNotValidException e) {
             e.printStackTrace();
@@ -58,7 +58,7 @@ public class SimpleParameterDeserializer extends JsonDeserializer<SimpleParamete
             case CHAR: {
                 if (!validatorNode.isNull()) {
                     JsonNode regExpNode = validatorNode.get("regExp");
-                    RegExpValidator validator = new RegExpValidator(regExpNode.asText());
+                    RegExpValidator validator = new RegExpValidator(regExpNode.textValue());
                     parameter.setValidator(validator);
                 }
                 parameter.setValue(valueNode.textValue().charAt(0));
@@ -67,7 +67,7 @@ public class SimpleParameterDeserializer extends JsonDeserializer<SimpleParamete
             case STRING: {
                 if (!validatorNode.isNull()) {
                     JsonNode regExpNode = validatorNode.get("regExp");
-                    RegExpValidator validator = new RegExpValidator(regExpNode.asText());
+                    RegExpValidator validator = new RegExpValidator(regExpNode.textValue());
                     parameter.setValidator(validator);
                 }
                 parameter.setValue(valueNode.textValue());
@@ -113,12 +113,12 @@ public class SimpleParameterDeserializer extends JsonDeserializer<SimpleParamete
                 if (!validatorNode.isNull()) {
                     JsonNode lowerBoundNode = validatorNode.get("lowerBound");
                     JsonNode upperBoundNode = validatorNode.get("upperBound");
-                    byte lowerBound = Byte.parseByte(lowerBoundNode.asText());
-                    byte upperBound = Byte.parseByte(upperBoundNode.asText());
+                    byte lowerBound = (byte) lowerBoundNode.shortValue();
+                    byte upperBound = (byte) upperBoundNode.shortValue();
                     NumberValidator<Byte> validator = new NumberValidator<Byte>(lowerBound, upperBound);
                     parameter.setValidator(validator);
                 }
-                parameter.setValue(Byte.parseByte(valueNode.asText()));
+                parameter.setValue((byte) valueNode.shortValue());
                 break;
             }
             case DOUBLE: {
@@ -150,7 +150,6 @@ public class SimpleParameterDeserializer extends JsonDeserializer<SimpleParamete
                 break;
             }
             default:
-                parameter.setValue(null);
                 break;
         }
 

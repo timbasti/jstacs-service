@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 
@@ -32,9 +32,9 @@ public class FileReprensentationDeserializer extends JsonDeserializer<FileRepres
     @Override
     public FileRepresentation deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
-        TreeNode treeNode = objectMapper.readTree(jsonParser);
-        TextNode fileNameNode = (TextNode) treeNode.get("fileName");
-        String fileName = fileNameNode.asText();
+        JsonNode treeNode = objectMapper.readTree(jsonParser);
+        TextNode fileNameNode = (TextNode) treeNode.get("name");
+        String fileName = fileNameNode.textValue();
         String absoluteFilePath = storageService.resolveFilePath(fileName);
         return new FileRepresentation(absoluteFilePath);
     }
