@@ -33,7 +33,7 @@ public class FileReprensentationDeserializer extends JsonDeserializer<FileRepres
     public FileRepresentation deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
         JsonNode treeNode = objectMapper.readTree(jsonParser);
-        TextNode fileNameNode = (TextNode) treeNode.get("fileName");
+        TextNode fileNameNode = (TextNode) treeNode.get("name");
         String fileName = fileNameNode.textValue();
         String absoluteFilePath = storageService.resolveFilePath(fileName);
         return new FileRepresentation(absoluteFilePath);
