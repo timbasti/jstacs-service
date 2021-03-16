@@ -6,9 +6,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.boot.jackson.JsonComponent;
 
@@ -17,21 +16,17 @@ import de.jstacs.parameters.SimpleParameterSet;
 
 @JsonComponent
 public class SimpleParameterSetDeserializer extends JsonDeserializer<SimpleParameterSet> {
-
-    private ObjectMapper objectMapper;
-
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
     @Override
     public SimpleParameterSet deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
 
-        JsonNode jsonNode = objectMapper.readTree(jsonParser);
-        ArrayNode parametersNode = (ArrayNode) jsonNode.get("parameters");
+        ObjectNode rootNode = (ObjectNode) context.readTree(jsonParser);
+        ArrayNode parametersNode = (ArrayNode) rootNode.get("parameters");
         
-        Parameter[] parameters = objectMapper.readValue(parametersNode.toString(), Parameter[].class);
+        JsonParser parameterJsonParser = parametersNode.traverse();
+        parameterJsonParser.nextToken();
+
+        Parameter[] parameters = context.readValue(parameterJsonParser, Parameter[].class);
         SimpleParameterSet simpleParameterSet = new SimpleParameterSet(parameters);
         return simpleParameterSet;
 

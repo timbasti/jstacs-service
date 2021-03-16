@@ -45,6 +45,7 @@ public class ToolParameterSetSerializer extends JsonSerializer<ToolParameterSet>
             case "de.jstacs.parameters.FileParameter":
                 jsonGenerator.writeObject((FileParameter) parameter);
                 break;
+            case "de.jstacs.parameters.EnumParameter":
             case "de.jstacs.parameters.SelectionParameter":
                 jsonGenerator.writeObject((SelectionParameter) parameter);
                 break;
@@ -52,6 +53,7 @@ public class ToolParameterSetSerializer extends JsonSerializer<ToolParameterSet>
                 jsonGenerator.writeObject((ParameterSetContainer) parameter);
                 break;
             default:
+                // TODO: Throw specific error
                 jsonGenerator.writeNull();
                 break;
         }

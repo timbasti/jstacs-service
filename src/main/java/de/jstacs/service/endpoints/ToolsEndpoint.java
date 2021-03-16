@@ -1,6 +1,8 @@
 package de.jstacs.service.endpoints;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.reflections.Reflections;
@@ -22,10 +24,41 @@ import de.jstacs.tools.ui.cli.CLI.SysProtocol;
 public class ToolsEndpoint {
 
     @GetMapping
-    public Set<Class<? extends JstacsTool>> getTools() throws Exception {
+    public ArrayList<JstacsTool> getTools() throws Exception {
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        ArrayList<JstacsTool> tools = new ArrayList<JstacsTool>();
         Reflections reflections = new Reflections("projects");
         Set<Class<? extends JstacsTool>> subTypes = reflections.getSubTypesOf(JstacsTool.class);
-        return subTypes;
+        subTypes.forEach(toolType -> {
+            try {
+                Class toolClass = classLoader.loadClass(toolType.getName());
+                Constructor constructor = toolClass.getConstructor();
+                JstacsTool jstacsTool = (JstacsTool) constructor.newInstance();
+                tools.add(jstacsTool);
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SecurityException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
+        return tools;
     }
 
     @RequestMapping(value = "/{tool}", method = RequestMethod.GET)

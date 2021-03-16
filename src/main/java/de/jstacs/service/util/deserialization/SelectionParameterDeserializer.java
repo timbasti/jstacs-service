@@ -1,15 +1,16 @@
 package de.jstacs.service.util.deserialization;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 import org.springframework.boot.jackson.JsonComponent;
 
@@ -25,40 +26,32 @@ import de.jstacs.parameters.SimpleParameter.IllegalValueException;
 @JsonComponent
 public class SelectionParameterDeserializer extends JsonDeserializer<SelectionParameter> {
 
-    private ObjectMapper objectMapper;
-
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
     @Override
     public SelectionParameter deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
 
-        JsonNode jsonNode = objectMapper.readTree(jsonParser);
-        JsonNode nameNode = jsonNode.get("name");
-        JsonNode dataTypeNode = jsonNode.get("dataType");
-        JsonNode commentNode = jsonNode.get("comment");
-        JsonNode requiredNode = jsonNode.get("required");
-        JsonNode selectedNameNode = jsonNode.get("selectedName");
-        JsonNode parametersInCollectionNode = jsonNode.get("parametersInCollection");
+        ObjectNode rootNode = (ObjectNode) context.readTree(jsonParser);
+        TextNode nameNode = (TextNode) rootNode.get("name");
+        TextNode dataTypeNode = (TextNode) rootNode.get("dataType");
+        TextNode commentNode = (TextNode) rootNode.get("comment");
+        BooleanNode requiredNode = (BooleanNode) rootNode.get("required");
+        TextNode selectedNameNode = (TextNode) rootNode.get("selectedName");
+        ObjectNode parametersInCollectionNode = (ObjectNode) rootNode.get("parametersInCollection");
 
-        String name = nameNode.textValue();
-        String dataType = dataTypeNode.textValue();
-        String comment = commentNode.textValue();
-        boolean required = requiredNode.booleanValue();
-        String selectedName = selectedNameNode.textValue();
+        JsonParser parametersInCollectionJsonParser = parametersInCollectionNode.traverse();
+        parametersInCollectionJsonParser.nextToken();
 
-        SimpleParameterSet simpleParameterSet = objectMapper.readValue(parametersInCollectionNode.toString(),
+        SimpleParameterSet simpleParameterSet = context.readValue(parametersInCollectionJsonParser,
                 SimpleParameterSet.class);
 
-        Object[] values = selectValues(simpleParameterSet);
-        String[] keys = selectKeys(simpleParameterSet);
+        Map<String, Object> keysAndValues = this.selectKeysAndValues(simpleParameterSet);
+        Object[] values = keysAndValues.values().toArray();
+        String[] keys = keysAndValues.keySet().toArray(new String[] {});
 
         try {
-            SelectionParameter selectionParameter = new SelectionParameter(DataType.valueOf(dataType), keys, values,
-                    name, comment, required);
-            selectionParameter.setValue(selectedName);
+            SelectionParameter selectionParameter = new SelectionParameter(DataType.valueOf(dataTypeNode.textValue()),
+                    keys, values, nameNode.textValue(), commentNode.textValue(), requiredNode.booleanValue());
+            selectionParameter.setValue(selectedNameNode.textValue());
             return selectionParameter;
         } catch (IllegalValueException | InconsistentCollectionException | DatatypeNotValidException e) {
             // TODO Auto-generated catch block
@@ -69,27 +62,16 @@ public class SelectionParameterDeserializer extends JsonDeserializer<SelectionPa
 
     }
 
-    // TODO: Use Map<String, Object> and only one iteration ;-)
-    private Object[] selectValues(ParameterSet parameterSet) {
-        List<Object> values = new ArrayList<Object>();
+    private Map<String, Object> selectKeysAndValues(ParameterSet parameterSet) {
+        Map<String, Object> keysAndValues = new HashMap<String, Object>();
         int numberOfParameters = parameterSet.getNumberOfParameters();
         for (int i = 0; i < numberOfParameters; i++) {
             Parameter parameter = parameterSet.getParameterAt(i);
-            Object valueAtI = parameter.getValue();
-            values.add(valueAtI);
+            String key = parameter.getName();
+            Object value = parameter.getValue();
+            keysAndValues.put(key, value);
         }
-        return values.toArray();
-    }
-
-    private String[] selectKeys(ParameterSet parameterSet) {
-        List<String> keys = new ArrayList<String>();
-        int numberOfParameters = parameterSet.getNumberOfParameters();
-        for (int i = 0; i < numberOfParameters; i++) {
-            Parameter parameter = parameterSet.getParameterAt(i);
-            String valueAtI = parameter.getName();
-            keys.add(valueAtI);
-        }
-        return keys.toArray(new String[] {});
+        return keysAndValues;
     }
 
 }
