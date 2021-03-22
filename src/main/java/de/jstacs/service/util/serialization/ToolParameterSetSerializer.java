@@ -29,12 +29,14 @@ public class ToolParameterSetSerializer extends JsonSerializer<ToolParameterSet>
         int numberOfParameters = parameterSet.getNumberOfParameters();
         for (int i = 0; i < numberOfParameters; i++) {
             Parameter parameter = parameterSet.getParameterAt(i);
-            this.serializeParameter(parameter, jsonGenerator);
+            jsonGenerator.writeObject(parameter);
+            // this.serializeParameter(parameter, jsonGenerator);
         }
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
     }
 
+    // TODO: Maybe use a ParameterSerializer
     private void serializeParameter(Parameter parameter, JsonGenerator jsonGenerator)
             throws IOException {
         String type = parameter.getClass().getTypeName();

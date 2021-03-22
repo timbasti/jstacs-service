@@ -6,8 +6,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import org.springframework.boot.jackson.JsonComponent;
 
@@ -21,10 +20,10 @@ public class ParameterSetContainerDeserializer extends JsonDeserializer<Paramete
     public ParameterSetContainer deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
 
-        ObjectNode rootNode = (ObjectNode) context.readTree(jsonParser);
-        TextNode nameNode = (TextNode) rootNode.get("name");
-        TextNode commentNode = (TextNode) rootNode.get("comment");
-        ObjectNode valueNode = (ObjectNode) rootNode.get("value");
+        JsonNode rootNode = context.readTree(jsonParser);
+        JsonNode nameNode = rootNode.get("name");
+        JsonNode commentNode = rootNode.get("comment");
+        JsonNode valueNode = rootNode.get("value");
 
         JsonParser valuJsonParser = valueNode.traverse();
         valuJsonParser.nextToken();

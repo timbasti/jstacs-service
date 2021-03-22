@@ -23,6 +23,8 @@ public class ParameterSetContainerSerializer extends JsonSerializer<ParameterSet
         jsonGenerator.writeStringField("type", parameterSetContainer.getClass().getTypeName());
         jsonGenerator.writeStringField("name", parameterSetContainer.getName());
         jsonGenerator.writeStringField("comment", parameterSetContainer.getComment());
+        jsonGenerator.writeStringField("dataType", parameterSetContainer.getDatatype().name());
+        jsonGenerator.writeBooleanField("required", parameterSetContainer.isRequired());
         jsonGenerator.writeBooleanField("isAtomic", parameterSetContainer.isAtomic());
         jsonGenerator.writeFieldName("value");
         this.serializeParameterSet(parameterSet, jsonGenerator);

@@ -7,6 +7,7 @@ import org.springframework.util.MimeTypeUtils;
 import de.jstacs.DataType;
 import de.jstacs.classifiers.differentiableSequenceScoreBased.OptimizableFunction.KindOfParameter;
 import de.jstacs.data.DataSet;
+import de.jstacs.tools.DataColumnParameter;
 import de.jstacs.tools.ToolParameterSet;
 import de.jstacs.parameters.EnumParameter;
 import de.jstacs.parameters.FileParameter;
@@ -64,6 +65,9 @@ public class DefaultInitializer {
         FileRepresentation nextFileRepresentation = new FileRepresentation(nextAbsoluteFilePath);
         nextFileParameter.setDefault(nextFileRepresentation);
 
+        DataColumnParameter dataColumnParameter = new DataColumnParameter(nextFileParameter.getName(),
+                "Data Column Parameter", "This is a nice data column parameter", true, 1);
+
         SelectionParameter sp1 = new SelectionParameter(DataType.INT, new String[] { "selection 1", "selection 2" },
                 new Object[] { 12345, 67890 }, "simple selection", "select something", true);
 
@@ -80,8 +84,12 @@ public class DefaultInitializer {
                 "Indicates whether special plugIn parameters or the zero vector should be used as start parameters. For non-concave problems it is highly recommended to use plugIn parameters.",
                 true, KindOfParameter.PLUGIN.name());
 
-        return new ToolParameterSet("Simple Tool", charParameter, stringParameter, byteParameter, shortParameter,
-                intParameter, longParameter, floatParameter, doubleParameter, boolParameter, sp1, sp2, ep);
+        return new ToolParameterSet("Simple Tool", /*
+                                                    * charParameter, stringParameter, byteParameter, shortParameter,
+                                                    * intParameter, longParameter, floatParameter, doubleParameter,
+                                                    * boolParameter, fileParameter,
+                                                    */
+                nextFileParameter, dataColumnParameter/* , sp1, sp2, ep */);
     }
 
 }

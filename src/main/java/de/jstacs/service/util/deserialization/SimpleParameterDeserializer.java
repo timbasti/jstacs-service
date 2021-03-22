@@ -7,10 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 
 import org.springframework.boot.jackson.JsonComponent;
 
@@ -28,11 +24,11 @@ public class SimpleParameterDeserializer extends JsonDeserializer<SimpleParamete
     public SimpleParameter deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
 
-        ObjectNode rootNode = (ObjectNode) context.readTree(jsonParser);
-        TextNode dataTypeNode = (TextNode) rootNode.get("dataType");
-        TextNode nameNode = (TextNode) rootNode.get("name");
-        TextNode commentNode = (TextNode) rootNode.get("comment");
-        BooleanNode requiredNode = (BooleanNode) rootNode.get("required");
+        JsonNode rootNode = context.readTree(jsonParser);
+        JsonNode dataTypeNode = rootNode.get("dataType");
+        JsonNode nameNode = rootNode.get("name");
+        JsonNode commentNode = rootNode.get("comment");
+        JsonNode requiredNode = rootNode.get("required");
 
         try {
             SimpleParameter parameter = new SimpleParameter(DataType.valueOf(dataTypeNode.textValue()),
@@ -55,7 +51,7 @@ public class SimpleParameterDeserializer extends JsonDeserializer<SimpleParamete
         switch (dataType) {
         case CHAR: {
             if (!validatorNode.isNull()) {
-                TextNode regExpNode = (TextNode) validatorNode.get("regExp");
+                JsonNode regExpNode = validatorNode.get("regExp");
                 RegExpValidator validator = new RegExpValidator(regExpNode.textValue());
                 parameter.setValidator(validator);
             }
@@ -64,87 +60,87 @@ public class SimpleParameterDeserializer extends JsonDeserializer<SimpleParamete
         }
         case STRING: {
             if (!validatorNode.isNull()) {
-                TextNode regExpNode = (TextNode) validatorNode.get("regExp");
+                JsonNode regExpNode = validatorNode.get("regExp");
                 RegExpValidator validator = new RegExpValidator(regExpNode.textValue());
                 parameter.setValidator(validator);
             }
-            parameter.setValue(((TextNode) valueNode).textValue());
+            parameter.setValue(valueNode.textValue());
             break;
         }
         case LONG: {
             if (!validatorNode.isNull()) {
-                NumericNode lowerBoundNode = (NumericNode) validatorNode.get("lowerBound");
-                NumericNode upperBoundNode = (NumericNode) validatorNode.get("upperBound");
+                JsonNode lowerBoundNode = validatorNode.get("lowerBound");
+                JsonNode upperBoundNode = validatorNode.get("upperBound");
                 long lowerBound = lowerBoundNode.longValue();
                 long upperBound = upperBoundNode.longValue();
                 NumberValidator<Long> validator = new NumberValidator<Long>(lowerBound, upperBound);
                 parameter.setValidator(validator);
             }
-            parameter.setValue(((NumericNode) valueNode).longValue());
+            parameter.setValue(valueNode.longValue());
             break;
         }
         case INT: {
             if (!validatorNode.isNull()) {
-                NumericNode lowerBoundNode = (NumericNode) validatorNode.get("lowerBound");
-                NumericNode upperBoundNode = (NumericNode) validatorNode.get("upperBound");
+                JsonNode lowerBoundNode = validatorNode.get("lowerBound");
+                JsonNode upperBoundNode = validatorNode.get("upperBound");
                 int lowerBound = lowerBoundNode.intValue();
                 int upperBound = upperBoundNode.intValue();
                 NumberValidator<Integer> validator = new NumberValidator<Integer>(lowerBound, upperBound);
                 parameter.setValidator(validator);
             }
-            parameter.setValue(((NumericNode) valueNode).intValue());
+            parameter.setValue(valueNode.intValue());
             break;
         }
         case SHORT: {
             if (!validatorNode.isNull()) {
-                NumericNode lowerBoundNode = (NumericNode) validatorNode.get("lowerBound");
-                NumericNode upperBoundNode = (NumericNode) validatorNode.get("upperBound");
+                JsonNode lowerBoundNode = validatorNode.get("lowerBound");
+                JsonNode upperBoundNode = validatorNode.get("upperBound");
                 short lowerBound = lowerBoundNode.shortValue();
                 short upperBound = upperBoundNode.shortValue();
                 NumberValidator<Short> validator = new NumberValidator<Short>(lowerBound, upperBound);
                 parameter.setValidator(validator);
             }
-            parameter.setValue(((NumericNode) valueNode).shortValue());
+            parameter.setValue(valueNode.shortValue());
             break;
         }
         case BYTE: {
             if (!validatorNode.isNull()) {
-                NumericNode lowerBoundNode = (NumericNode) validatorNode.get("lowerBound");
-                NumericNode upperBoundNode = (NumericNode) validatorNode.get("upperBound");
+                JsonNode lowerBoundNode = validatorNode.get("lowerBound");
+                JsonNode upperBoundNode = validatorNode.get("upperBound");
                 byte lowerBound = (byte) lowerBoundNode.shortValue();
                 byte upperBound = (byte) upperBoundNode.shortValue();
                 NumberValidator<Byte> validator = new NumberValidator<Byte>(lowerBound, upperBound);
                 parameter.setValidator(validator);
             }
-            parameter.setValue((byte) ((NumericNode) valueNode).shortValue());
+            parameter.setValue((byte) valueNode.shortValue());
             break;
         }
         case DOUBLE: {
             if (!validatorNode.isNull()) {
-                NumericNode lowerBoundNode = (NumericNode) validatorNode.get("lowerBound");
-                NumericNode upperBoundNode = (NumericNode) validatorNode.get("upperBound");
+                JsonNode lowerBoundNode = validatorNode.get("lowerBound");
+                JsonNode upperBoundNode = validatorNode.get("upperBound");
                 double lowerBound = lowerBoundNode.doubleValue();
                 double upperBound = upperBoundNode.doubleValue();
                 NumberValidator<Double> validator = new NumberValidator<Double>(lowerBound, upperBound);
                 parameter.setValidator(validator);
             }
-            parameter.setValue(((NumericNode) valueNode).doubleValue());
+            parameter.setValue(valueNode.doubleValue());
             break;
         }
         case FLOAT: {
             if (!validatorNode.isNull()) {
-                NumericNode lowerBoundNode = (NumericNode) validatorNode.get("lowerBound");
-                NumericNode upperBoundNode = (NumericNode) validatorNode.get("upperBound");
+                JsonNode lowerBoundNode = validatorNode.get("lowerBound");
+                JsonNode upperBoundNode = validatorNode.get("upperBound");
                 float lowerBound = lowerBoundNode.floatValue();
                 float upperBound = upperBoundNode.floatValue();
                 NumberValidator<Float> validator = new NumberValidator<Float>(lowerBound, upperBound);
                 parameter.setValidator(validator);
             }
-            parameter.setValue(((NumericNode) valueNode).floatValue());
+            parameter.setValue(valueNode.floatValue());
             break;
         }
         case BOOLEAN: {
-            parameter.setValue(((BooleanNode) valueNode).booleanValue());
+            parameter.setValue(valueNode.booleanValue());
             break;
         }
         default:

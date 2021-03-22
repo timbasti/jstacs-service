@@ -6,9 +6,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import org.springframework.boot.jackson.JsonComponent;
 
@@ -23,12 +21,12 @@ public class FileParameterDeserializer extends JsonDeserializer<FileParameter> {
     public FileParameter deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
 
-        ObjectNode rootNode = (ObjectNode) context.readTree(jsonParser);
-        TextNode nameNode = (TextNode) rootNode.get("name");
-        TextNode commentNode = (TextNode) rootNode.get("comment");
-        BooleanNode requiredNode = (BooleanNode) rootNode.get("required");
-        TextNode acceptedMimeTypeNode = (TextNode) rootNode.get("acceptedMimeType");
-        ObjectNode fileContentsNode = (ObjectNode) rootNode.get("fileContents");
+        JsonNode rootNode = context.readTree(jsonParser);
+        JsonNode nameNode = rootNode.get("name");
+        JsonNode commentNode = rootNode.get("comment");
+        JsonNode requiredNode = rootNode.get("required");
+        JsonNode acceptedMimeTypeNode = rootNode.get("acceptedMimeType");
+        JsonNode fileContentsNode = rootNode.get("fileContents");
 
         JsonParser fileContentsJsonParser = fileContentsNode.traverse();
         fileContentsJsonParser.nextToken();
