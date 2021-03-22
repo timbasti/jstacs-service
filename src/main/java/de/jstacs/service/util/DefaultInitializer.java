@@ -5,7 +5,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
 
 import de.jstacs.DataType;
+import de.jstacs.classifiers.differentiableSequenceScoreBased.OptimizableFunction.KindOfParameter;
+import de.jstacs.data.DataSet;
+import de.jstacs.tools.DataColumnParameter;
 import de.jstacs.tools.ToolParameterSet;
+import de.jstacs.parameters.EnumParameter;
 import de.jstacs.parameters.FileParameter;
 import de.jstacs.parameters.Parameter;
 import de.jstacs.parameters.SelectionParameter;
@@ -60,7 +64,10 @@ public class DefaultInitializer {
         String nextAbsoluteFilePath = storageService.resolveFilePath(nextFileName);
         FileRepresentation nextFileRepresentation = new FileRepresentation(nextAbsoluteFilePath);
         nextFileParameter.setDefault(nextFileRepresentation);
-        
+
+        DataColumnParameter dataColumnParameter = new DataColumnParameter(nextFileParameter.getName(),
+                "Data Column Parameter", "This is a nice data column parameter", true, 1);
+
         SelectionParameter sp1 = new SelectionParameter(DataType.INT, new String[] { "selection 1", "selection 2" },
                 new Object[] { 12345, 67890 }, "simple selection", "select something", true);
 
@@ -69,11 +76,20 @@ public class DefaultInitializer {
                 new SimpleParameter(DataType.STRING, "string parameter", "some string parameter", true));
         SimpleParameterSet ps2 = new SimpleParameterSet(
                 new SimpleParameter(DataType.DOUBLE, "double parameter", "some double parameter", true));
-        SelectionParameter sp2 = new SelectionParameter(DataType.PARAMETERSET, new String[] { "selection 1", "selection 2" },
-                new Object[] { ps1, ps2 }, "complex selection", "select something", true);
+        SelectionParameter sp2 = new SelectionParameter(DataType.PARAMETERSET,
+                new String[] { "selection 1", "selection 2" }, new Object[] { ps1, ps2 }, "complex selection",
+                "select something", true);
 
-        return new ToolParameterSet("Simple Tool", charParameter, stringParameter, byteParameter, shortParameter,
-                intParameter, longParameter, floatParameter, doubleParameter, boolParameter, fileParameter, nextFileParameter, sp1, sp2);
+        EnumParameter ep = new EnumParameter(KindOfParameter.class,
+                "Indicates whether special plugIn parameters or the zero vector should be used as start parameters. For non-concave problems it is highly recommended to use plugIn parameters.",
+                true, KindOfParameter.PLUGIN.name());
+
+        return new ToolParameterSet("Simple Tool", /*
+                                                    * charParameter, stringParameter, byteParameter, shortParameter,
+                                                    * intParameter, longParameter, floatParameter, doubleParameter,
+                                                    * boolParameter, fileParameter,
+                                                    */
+                nextFileParameter, dataColumnParameter/* , sp1, sp2, ep */);
     }
 
 }

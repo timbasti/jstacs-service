@@ -7,10 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 
 import org.springframework.boot.jackson.JsonComponent;
 
@@ -21,24 +17,21 @@ import de.jstacs.parameters.SimpleParameter.IllegalValueException;
 @JsonComponent
 public class FileParameterDeserializer extends JsonDeserializer<FileParameter> {
 
-    private ObjectMapper objectMapper;
-
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
     @Override
     public FileParameter deserialize(JsonParser jsonParser, DeserializationContext context)
             throws IOException, JsonProcessingException {
 
-        JsonNode treeNode = objectMapper.readTree(jsonParser);
-        TextNode nameNode = (TextNode) treeNode.get("name");
-        TextNode commentNode = (TextNode) treeNode.get("comment");
-        BooleanNode requiredNode = (BooleanNode) treeNode.get("required");
-        TextNode acceptedMimeTypeNode = (TextNode) treeNode.get("acceptedMimeType");
-        ObjectNode fileContentsNode = (ObjectNode) treeNode.get("fileContents");
+        JsonNode rootNode = context.readTree(jsonParser);
+        JsonNode nameNode = rootNode.get("name");
+        JsonNode commentNode = rootNode.get("comment");
+        JsonNode requiredNode = rootNode.get("required");
+        JsonNode acceptedMimeTypeNode = rootNode.get("acceptedMimeType");
+        JsonNode fileContentsNode = rootNode.get("fileContents");
 
-        FileRepresentation fileRepresentation = objectMapper.readValue(fileContentsNode.toString(),
+        JsonParser fileContentsJsonParser = fileContentsNode.traverse();
+        fileContentsJsonParser.nextToken();
+
+        FileRepresentation fileRepresentation = context.readValue(fileContentsJsonParser,
                 FileRepresentation.class);
 
         FileParameter fileParameter = new FileParameter(nameNode.textValue(), commentNode.textValue(),

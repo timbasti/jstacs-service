@@ -29,12 +29,14 @@ public class ToolParameterSetSerializer extends JsonSerializer<ToolParameterSet>
         int numberOfParameters = parameterSet.getNumberOfParameters();
         for (int i = 0; i < numberOfParameters; i++) {
             Parameter parameter = parameterSet.getParameterAt(i);
-            this.serializeParameter(parameter, jsonGenerator);
+            jsonGenerator.writeObject(parameter);
+            // this.serializeParameter(parameter, jsonGenerator);
         }
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
     }
 
+    // TODO: Maybe use a ParameterSerializer
     private void serializeParameter(Parameter parameter, JsonGenerator jsonGenerator)
             throws IOException {
         String type = parameter.getClass().getTypeName();
@@ -45,6 +47,7 @@ public class ToolParameterSetSerializer extends JsonSerializer<ToolParameterSet>
             case "de.jstacs.parameters.FileParameter":
                 jsonGenerator.writeObject((FileParameter) parameter);
                 break;
+            case "de.jstacs.parameters.EnumParameter":
             case "de.jstacs.parameters.SelectionParameter":
                 jsonGenerator.writeObject((SelectionParameter) parameter);
                 break;
@@ -52,6 +55,7 @@ public class ToolParameterSetSerializer extends JsonSerializer<ToolParameterSet>
                 jsonGenerator.writeObject((ParameterSetContainer) parameter);
                 break;
             default:
+                // TODO: Throw specific error
                 jsonGenerator.writeNull();
                 break;
         }
