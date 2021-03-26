@@ -16,6 +16,7 @@ public class FileParameterSerializer extends JsonSerializer<FileParameter> {
     @Override
     public void serialize(FileParameter parameter, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
             throws IOException {
+
         jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("type", parameter.getClass().getTypeName());
         jsonGenerator.writeStringField("name", parameter.getName());

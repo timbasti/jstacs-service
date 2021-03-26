@@ -28,7 +28,8 @@ public class SimpleParameterSetSerializer extends JsonSerializer<SimpleParameter
         int numberOfParameters = parameterSet.getNumberOfParameters();
         for (int i = 0; i < numberOfParameters; i++) {
             Parameter parameter = parameterSet.getParameterAt(i);
-            this.serializeParameter(parameter, jsonGenerator);
+            jsonGenerator.writeObject(parameter);
+            // this.serializeParameter(parameter, jsonGenerator);
         }
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();

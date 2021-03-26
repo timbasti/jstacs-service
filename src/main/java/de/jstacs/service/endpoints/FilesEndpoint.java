@@ -53,4 +53,15 @@ public class FilesEndpoint {
                 .body(fileResource);
     }
 
+    @GetMapping("/results/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveResultFile(@PathVariable String filename) throws IOException {
+
+        Resource fileResource = storageService.loadAsResource("results/" + filename);
+        String mimeType = tika.detect(fileResource.getFile());
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(mimeType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileResource.getFilename() + "\"")
+                .body(fileResource);
+    }
+
 }

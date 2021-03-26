@@ -1,5 +1,6 @@
 package de.jstacs.service.storage;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -96,6 +97,10 @@ public class FileSystemStorageService implements StorageService {
     public Path relativizeFilePath(Path filePath) {
         Path absoluteRootPath = this.rootLocation.toAbsolutePath();
         return absoluteRootPath.relativize(filePath);
+    }
+
+    public File getRootDir() {
+        return this.rootLocation.toFile();
     }
 
 }
