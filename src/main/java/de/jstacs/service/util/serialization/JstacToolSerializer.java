@@ -24,6 +24,7 @@ public class JstacToolSerializer extends JsonSerializer<JstacsTool> {
         jsonGenerator.writeStringField("toolVersion", tool.getToolVersion());
         jsonGenerator.writeStringField("description", tool.getDescription());
         jsonGenerator.writeStringField("shortName", tool.getShortName());
+        jsonGenerator.writeStringField("helpText", tool.getHelpText());
 
         jsonGenerator.writeFieldName("references");
         if (toolReferences == null) {
@@ -32,12 +33,6 @@ public class JstacToolSerializer extends JsonSerializer<JstacsTool> {
             jsonGenerator.writeArray(toolReferences, 0, toolReferences.length);
         }
 
-        try {
-            jsonGenerator.writeStringField("helpText", tool.getHelpText());
-        } catch (NullPointerException e) {
-            System.out.println("NullPointerException while caling tool.getHelpText(). TODO: Handle exception there!");
-            jsonGenerator.writeNullField("helpText");
-        }
         jsonGenerator.writeEndObject();
     }
 

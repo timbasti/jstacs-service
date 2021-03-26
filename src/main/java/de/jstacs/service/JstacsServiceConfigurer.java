@@ -17,12 +17,16 @@ public class JstacsServiceConfigurer implements WebMvcConfigurer {
                 .allowedHeaders(headers);
         registry.addMapping("/files/{filename:.+}").allowedOrigins(origins).allowedMethods("OPTIONS", "HEAD", "GET")
                 .allowedHeaders(headers);
+        registry.addMapping("/files/results/{filename:.+}").allowedOrigins(origins).allowedMethods("OPTIONS", "HEAD", "GET")
+                .allowedHeaders(headers);
         registry.addMapping("/test").allowedOrigins(origins).allowedMethods("OPTIONS", "HEAD", "GET", "POST")
                 .allowedHeaders(headers);
         registry.addMapping("/tools").allowedOrigins(origins).allowedMethods("OPTIONS", "HEAD", "GET", "POST")
                 .allowedHeaders(headers);
         registry.addMapping("/tools/{tool}").allowedOrigins(origins).allowedMethods("OPTIONS", "HEAD", "GET", "POST")
                 .allowedHeaders(headers);
+        registry.addMapping("/tools/{tool}/results").allowedOrigins(origins)
+                .allowedMethods("OPTIONS", "HEAD", "GET", "POST").allowedHeaders(headers);
         registry.addMapping("/").allowedOrigins(origins).allowedMethods("OPTIONS", "HEAD", "GET")
                 .allowedHeaders(headers);
     }

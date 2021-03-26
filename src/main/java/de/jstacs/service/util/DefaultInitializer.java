@@ -54,10 +54,6 @@ public class DefaultInitializer {
                 true, false);
         Parameter fileParameter = new FileParameter("File Parameter", "Parameter to set a file",
                 MimeTypeUtils.TEXT_PLAIN_VALUE, true, null, true);
-        String fileName = storageService.create("test.txt", "Hello World!");
-        String absoluteFilePath = storageService.resolveFilePath(fileName);
-        FileRepresentation fileRepresentation = new FileRepresentation(absoluteFilePath);
-        fileParameter.setDefault(fileRepresentation);
         Parameter nextFileParameter = new FileParameter("Next File Parameter", "Another Parameter to set a file",
                 MimeTypeUtils.TEXT_PLAIN_VALUE, true, null, true);
         String nextFileName = storageService.create("foo.txt", "Bar!");
@@ -84,12 +80,9 @@ public class DefaultInitializer {
                 "Indicates whether special plugIn parameters or the zero vector should be used as start parameters. For non-concave problems it is highly recommended to use plugIn parameters.",
                 true, KindOfParameter.PLUGIN.name());
 
-        return new ToolParameterSet("Simple Tool", /*
-                                                    * charParameter, stringParameter, byteParameter, shortParameter,
-                                                    * intParameter, longParameter, floatParameter, doubleParameter,
-                                                    * boolParameter, fileParameter,
-                                                    */
-                nextFileParameter, dataColumnParameter/* , sp1, sp2, ep */);
+        return new ToolParameterSet("Simple Tool", charParameter, stringParameter, byteParameter, shortParameter,
+                intParameter, longParameter, floatParameter, doubleParameter, boolParameter, fileParameter,
+                nextFileParameter, dataColumnParameter, sp1, sp2, ep);
     }
 
 }

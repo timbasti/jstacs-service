@@ -23,7 +23,7 @@ public class DataColumnParameterSerializer extends JsonSerializer<DataColumnPara
         jsonGenerator.writeStringField("dataType", parameter.getDatatype().name());
         jsonGenerator.writeBooleanField("required", parameter.isRequired());
         jsonGenerator.writeStringField("dataRef", parameter.getDataRef());
-        jsonGenerator.writeNumberField("value", (int) parameter.getValue());
+        jsonGenerator.writeObjectField("value", parameter.getValue());
         jsonGenerator.writeEndObject();
     }
 
