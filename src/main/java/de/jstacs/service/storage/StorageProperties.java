@@ -2,20 +2,26 @@ package de.jstacs.service.storage;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
+@Data
+@RequiredArgsConstructor
 @ConfigurationProperties("storage")
 public class StorageProperties {
 
     /**
-     * Folder location for storing files
+     * Root folder location for storing files
      */
-    private String location = "upload";
+    private final String rootLocation = "files";
 
-    public String getLocation() {
-        return location;
-    }
+    /**
+     * Folder location for storing results
+     */
+    private final String resultsLocation = "results";
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
+    /**
+     * Folder location for storing defaults
+     */
+    private final String defaultsLocation = "defaults";
 }

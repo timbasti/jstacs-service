@@ -25,7 +25,7 @@ import lombok.Getter;
 
 public class JstacsToolTask {
 
-    @Getter
+    /* @Getter
     private final JstacsTool jstacsTool;
 
     @Getter
@@ -92,6 +92,6 @@ public class JstacsToolTask {
                 jstacsToolTaskResponse, status);
 
         return reponse;
-    }
+    } */
 
 }

@@ -1,6 +1,5 @@
 package de.jstacs.service.storage;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -13,94 +12,108 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-@Service
+@Repository
 public class FileSystemStorageService implements StorageService {
 
     private final Path rootLocation;
 
     @Autowired
     public FileSystemStorageService(StorageProperties properties) {
-        this.rootLocation = Paths.get(properties.getLocation());
+        Path rootPath = Paths.get(properties.getRootLocation());
+        this.rootLocation = rootPath.isAbsolute() ? rootPath : rootPath.toAbsolutePath();
     }
 
     @Override
-    public String store(MultipartFile file) throws IOException {
-        Path filePath = Paths.get(file.getOriginalFilename());
-        Path absoluteFilePath = this.resolveFilePath(filePath);
-        InputStream inputStream = file.getInputStream();
-        Files.copy(inputStream, absoluteFilePath, StandardCopyOption.REPLACE_EXISTING);
-        return filePath.toString();
+    public Path store(MultipartFile file) {
+        return this.store(file, Paths.get("temp"));
     }
 
     @Override
-    public String create(String fileName, String content) throws IOException {
-        Path filePath = Paths.get(fileName);
-        Path absoluteFilePath = this.resolveFilePath(filePath);
-        Files.writeString(absoluteFilePath, content);
-        return filePath.toString();
-    }
-
-    @Override
-    public Stream<Path> loadAll() throws IOException {
-        return Files.walk(this.rootLocation, 1).filter(path -> !path.equals(this.rootLocation))
-                .map(this.rootLocation::relativize);
-
-    }
-
-    @Override
-    public Path load(String filename) {
-        return rootLocation.resolve(filename);
-    }
-
-    @Override
-    public Resource loadAsResource(String filename) throws MalformedURLException {
-        Path file = load(filename);
-        Resource resource = new UrlResource(file.toUri());
-        if (resource.exists() || resource.isReadable()) {
-            return resource;
+    public Path store(MultipartFile file, Path path) {
+        try {
+            if (file.isEmpty()) {
+                throw new StorageException("Failed to store empty file.");
+            }
+            Path targetLocation = this.rootLocation.resolve(path).normalize();
+            Path filePath = Paths.get(file.getOriginalFilename());
+            Path destinationFilePath = targetLocation.resolve(filePath).normalize();
+            if (!destinationFilePath.startsWith(this.rootLocation)) {
+                // This is a security check
+                throw new StorageException("Cannot store file outside storage directory.");
+            }
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.createDirectories(targetLocation);
+                Files.copy(inputStream, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
+                return this.rootLocation.relativize(destinationFilePath);
+            }
+        } catch (IOException e) {
+            throw new StorageException("Failed to store file.", e);
         }
-        return null;
     }
 
     @Override
-    public void deleteAll() throws IOException {
-        FileSystemUtils.deleteRecursively(rootLocation);
+    public Stream<Path> loadAll() {
+        try {
+            return Files.walk(this.rootLocation, 1).filter(path -> !path.equals(this.rootLocation))
+                    .map(this.rootLocation::relativize);
+        } catch (IOException e) {
+            throw new StorageException("Failed to read stored files", e);
+        }
+
     }
 
     @Override
-    public void init() throws IOException {
-        Files.createDirectories(rootLocation);
-    }
-
-    public String resolveFilePath(String fileName) {
+    public Path load(String fileName) {
         Path filePath = Paths.get(fileName);
-        Path absoluteFilePath = this.resolveFilePath(filePath);
-        return absoluteFilePath.toString();
+        if (filePath.isAbsolute()) {
+            if (!filePath.startsWith(this.rootLocation)) {
+                // This is a security check
+                throw new StorageException("Cannot load file outside storage directory.");
+            }
+        } else {
+            filePath = rootLocation.resolve(filePath);
+        }
+        return filePath;
     }
 
-    public Path resolveFilePath(Path filePath) {
-        Path relativeFilePath = this.rootLocation.resolve(filePath).normalize();
-        Path absoluteFilePath = relativeFilePath.toAbsolutePath();
-        return absoluteFilePath;
+    @Override
+    public Resource loadAsResource(String filename) {
+        try {
+            Path filePath = load(filename);
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new StorageFileNotFoundException("Could not read file: " + filename);
+
+            }
+        } catch (MalformedURLException e) {
+            throw new StorageFileNotFoundException("Could not read file: " + filename, e);
+        }
     }
 
-    public String relativizeFilePath(String fileName) {
-        Path filePath = Paths.get(fileName);
-        Path relativeFilePath = this.relativizeFilePath(filePath);
-        return relativeFilePath.toString();
+    @Override
+    public Path locate(String fileName) {
+        Path loadedPath = this.load(fileName);
+        return rootLocation.relativize(loadedPath);
     }
 
-    public Path relativizeFilePath(Path filePath) {
-        Path absoluteRootPath = this.rootLocation.toAbsolutePath();
-        return absoluteRootPath.relativize(filePath);
+    @Override
+    public void deleteAll() {
+        FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
 
-    public File getRootDir() {
-        return this.rootLocation.toFile();
+    @Override
+    public void init() {
+        try {
+            Files.createDirectories(rootLocation);
+        } catch (IOException e) {
+            throw new StorageException("Could not initialize storage", e);
+        }
     }
 
 }

@@ -18,7 +18,7 @@ import de.jstacs.tools.ToolResult;
 @Service
 public class JstacsToolService {
 
-    private final AtomicReference<JstacsToolTask> taskReference;
+    /* private final AtomicReference<JstacsToolTask> taskReference;
 
     private final AtomicReference<CompletableFuture<ToolResult>> futureReference;
 
@@ -65,6 +65,6 @@ public class JstacsToolService {
     public synchronized ResponseEntity<ToolTaskFileResult> getResult() {
         JstacsToolTask currentTask = taskReference.get();
         return currentTask.getResult();
-    }
+    } */
 
 }
