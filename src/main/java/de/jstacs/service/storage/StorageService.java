@@ -3,25 +3,25 @@ package de.jstacs.service.storage;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
 public interface StorageService {
 
-	void init() throws IOException;
+	void init();
 
-    String store(MultipartFile file) throws IOException;
-    
-    String create(String fileName, String content) throws IOException;
+	Path store(MultipartFile file);
 
-	Stream<Path> loadAll() throws IOException;
+    Path store(MultipartFile file, Path path);
 
-	Path load(String filename);
+	Stream<Path> loadAll();
 
-	Resource loadAsResource(String filename) throws MalformedURLException;
+	Path load(String fileName);
 
-	void deleteAll() throws IOException;
+	Resource loadAsResource(String filename);
+
+    Path locate(String fileName);
+
+	void deleteAll();
 
 }
