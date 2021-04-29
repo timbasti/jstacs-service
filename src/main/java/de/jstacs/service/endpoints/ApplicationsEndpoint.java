@@ -1,6 +1,7 @@
 package de.jstacs.service.endpoints;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,7 +19,8 @@ import de.jstacs.service.data.entities.Application;
 import de.jstacs.service.data.entities.Tool;
 import de.jstacs.service.data.repositories.ApplicationRepository;
 import de.jstacs.service.data.repositories.ToolRepository;
-import de.jstacs.service.data.requestmappings.ApplicationValues;
+import de.jstacs.service.data.requestmappings.ApplicationCreationValues;
+import de.jstacs.service.data.requestmappings.ApplicationUpdateValues;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,23 +40,24 @@ public class ApplicationsEndpoint {
     }
 
     @PostMapping
-    public List<Application> createApplication(@RequestBody ApplicationValues applicationValues) {
-        Application application = new Application(applicationValues.getName());
-        applicationValues.getToolTypes().forEach((toolType) -> {
-            Tool tool = this.toolRepository.findByType(toolType).get();
+    public List<Application> createApplication(@RequestBody ApplicationCreationValues creationValues) {
+        Application application = new Application(creationValues.getName());
+        creationValues.getToolIds().forEach((toolId) -> {
+            Tool tool = this.toolRepository.findById(toolId).get();
             application.getTools().add(tool);
         });
         this.applicationRepository.saveAndFlush(application);
-        log.debug("Created: " + applicationValues.getName());
+        log.debug("Created: " + creationValues.getName());
         return this.applicationRepository.findAll();
     }
 
     @PutMapping("{applicationId}")
-    public List<Application> updateApplication(@PathVariable Long applicationId, @RequestBody Set<String> toolTypes) {
+    public List<Application> updateApplication(@PathVariable Long applicationId, @RequestBody ApplicationUpdateValues updateValues) {
+        Set<Long> toolIds = updateValues.getToolIds();
         Application application = this.applicationRepository.findById(applicationId).get();
-        Set<Tool> tools = new HashSet<Tool>();
-        toolTypes.forEach((toolType) -> {
-            Tool tool = this.toolRepository.findByType(toolType).get();
+        List<Tool> tools = new ArrayList<Tool>();
+        toolIds.forEach((toolId) -> {
+            Tool tool = this.toolRepository.findById(toolId).get();
             tools.add(tool);
         });
         application.setTools(tools);

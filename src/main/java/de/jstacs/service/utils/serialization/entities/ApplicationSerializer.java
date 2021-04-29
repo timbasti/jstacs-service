@@ -1,7 +1,7 @@
 package de.jstacs.service.utils.serialization.entities;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -19,7 +19,7 @@ public class ApplicationSerializer extends JsonSerializer<Application>{
     public void serialize(Application application, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
         Long applicationId = application.getId();
         String applicationName = application.getName();
-        Set<Tool> tools = application.getTools();
+        List<Tool> tools = application.getTools();
 
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("id", applicationId);

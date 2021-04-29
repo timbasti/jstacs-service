@@ -1,7 +1,7 @@
 package de.jstacs.service.data.entities;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 
 import de.jstacs.tools.JstacsTool;
 import lombok.Getter;
@@ -64,12 +65,13 @@ public class Tool {
     @Getter
     @Setter
     @OneToMany(mappedBy="tool")
-    private Set<ToolExecution> executions = new HashSet<ToolExecution>();
+    @OrderColumn
+    private List<ToolExecution> executions = new ArrayList<ToolExecution>();
 
     @Getter
     @Setter
     @ManyToMany(mappedBy = "tools")
-    private Set<Application> applications = new HashSet<Application>();
+    private List<Application> applications = new ArrayList<Application>();
 
     public Tool(JstacsTool tool) {
         this.type = tool.getClass().getName();

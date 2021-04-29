@@ -1,7 +1,7 @@
 package de.jstacs.service.data.entities;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OrderColumn;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,6 +39,7 @@ public class Application {
     @JoinTable(name = "Application_Tools", joinColumns = @JoinColumn(name = "application_id"), inverseJoinColumns = @JoinColumn(name = "tool_id"))
     @Getter
     @Setter
-    private Set<Tool> tools = new HashSet<Tool>();
+    @OrderColumn
+    private List<Tool> tools = new ArrayList<Tool>();
 
 }

@@ -1,12 +1,13 @@
 package de.jstacs.service.data.entities;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -28,6 +29,7 @@ public class User {
     @OneToMany(mappedBy="user")
     @Getter
     @Setter
-    private Set<ToolExecution> executions = new HashSet<ToolExecution>();
+    @OrderColumn
+    private List<ToolExecution> executions = new ArrayList<ToolExecution>();
     
 }

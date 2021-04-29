@@ -1,7 +1,7 @@
 package de.jstacs.service.utils.serialization.entities;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -18,8 +18,8 @@ public class ToolSerializer extends JsonSerializer<Tool> {
 
     @Override
     public void serialize(Tool tool, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
-        Set<Application> relatedApplications = tool.getApplications();
-        Set<ToolExecution> toolExecutions = tool.getExecutions();
+        List<Application> relatedApplications = tool.getApplications();
+        List<ToolExecution> toolExecutions = tool.getExecutions();
         String toolDescription = tool.getDescription();
         Long toolId = tool.getId();
         String toolName = tool.getName();

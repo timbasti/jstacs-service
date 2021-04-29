@@ -22,22 +22,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import de.jstacs.service.storage.StorageService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5000", "https://jstacs-online.herokuapp.com" })
 @Slf4j
 @RestController
 @RequestMapping("files")
+@RequiredArgsConstructor
 public class FilesEndpoint {
 
     private final StorageService storageService;
-    private final Tika tika;
-
-    @Autowired
-    public FilesEndpoint(StorageService storageService) {
-        this.storageService = storageService;
-        this.tika = new Tika();
-    }
 
     @PostMapping
     public Map<String, String> setFileParameterContent(@RequestParam("file") MultipartFile file,
@@ -56,6 +51,7 @@ public class FilesEndpoint {
 
         String mediaType = new String();
         try {
+            Tika tika = new Tika();
             mediaType = tika.detect(fileResource.getFile());
         } catch (IOException e) {
             log.debug("Could not detect media type: " + fileResource.getFilename());

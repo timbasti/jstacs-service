@@ -1,7 +1,7 @@
 package de.jstacs.service.utils.serialization.entities;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -18,7 +18,7 @@ public class UserSerializer extends JsonSerializer<User> {
     @Override
     public void serialize(User user, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
         String userId = user.getId();
-        Set<ToolExecution> toolExecutions = user.getExecutions();
+        List<ToolExecution> toolExecutions = user.getExecutions();
         
         jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("id", userId);

@@ -1,14 +1,16 @@
 package de.jstacs.service.data.requestmappings;
 
+import java.util.LinkedHashSet;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Data
 @NoArgsConstructor
-public class ExecutionValues {
+public class ApplicationUpdateValues {
 
     @NonNull
-    private Long toolId;
-
+    private LinkedHashSet<Long> toolIds;
+    
 }

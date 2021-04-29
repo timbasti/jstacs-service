@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import de.jstacs.results.savers.ResultSaver;
@@ -33,9 +36,14 @@ public class ToolResultProcessTask implements Callable<String[]> {
         }
 
         resultSaver.writeOutput(toolResult, resultsDir);
-        String[] results = resultsDir.list();
+    
+        List<String> resultFiles = new ArrayList<String>();
+        for (String fileName : resultsDir.list()) {
+            Path resultFilePath = targetDirectoryPath.resolve(fileName);
+            resultFiles.add(resultFilePath.toString());
+        }
 
-        return results;
+        return resultFiles.toArray(new String[]{});
     }
     
 }
