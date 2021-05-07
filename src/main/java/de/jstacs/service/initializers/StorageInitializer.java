@@ -14,8 +14,7 @@ public class StorageInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // this.storageService.deleteAll();
-        // this.storageService.init();
+        this.storageService.init();
     }
     
 }

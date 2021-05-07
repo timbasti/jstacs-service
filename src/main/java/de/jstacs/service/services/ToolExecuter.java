@@ -32,43 +32,6 @@ public class ToolExecuter {
             toolExecution.setState(ToolExecutionState.REJECTED);
             toolExecutionRepository.save(toolExecution);
         }
-
-
-
-
-       /* CompletableFuture.supplyAsync(() -> {
-            try {
-                ToolExecution toolExecution = newTask.getToolExecution();
-                toolExecution.setState(ToolExecutionState.PENDING);
-                toolExecutionRepository.save(toolExecution);
-                return newTask.call();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                ToolExecution toolExecution = newTask.getToolExecution();
-                toolExecution.setState(ToolExecutionState.REJECTED);
-                toolExecutionRepository.save(toolExecution);
-                e.printStackTrace();
-            }
-            return null;
-        }).thenApplyAsync((toolResult) -> {
-            ToolResultProcessTask toolResultProcessTask = this.toolResultTaskFactory.create(toolResult, newTask.getToolExecution());
-            try {
-                return toolResultProcessTask.call();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                ToolExecution toolExecution = newTask.getToolExecution();
-                toolExecution.setState(ToolExecutionState.REJECTED);
-                toolExecutionRepository.save(toolExecution);
-                e.printStackTrace();
-            }
-            return null;
-        }).thenAcceptAsync((createdFiles) -> {
-            ToolExecution toolExecution = newTask.getToolExecution();
-            toolExecution.setResults(createdFiles);
-            toolExecution.setState(ToolExecutionState.FULFILLED);
-            toolExecutionRepository.save(toolExecution);
-            log.debug("Created " + createdFiles.length + " result files for " + newTask.getToolName());
-        }); */
     }
 
 }

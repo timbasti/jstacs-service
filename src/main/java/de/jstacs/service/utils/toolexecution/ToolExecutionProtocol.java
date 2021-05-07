@@ -1,7 +1,5 @@
 package de.jstacs.service.utils.toolexecution;
 
-import java.io.IOException;
-
 import de.jstacs.service.data.entities.ToolExecution;
 import de.jstacs.service.data.repositories.ToolExecutionRepository;
 import de.jstacs.tools.Protocol;
