@@ -62,16 +62,15 @@ public class Tool {
     @Column(columnDefinition = "BLOB")
     private String[] references = {};
 
-    @Getter
+    /* @Getter
     @Setter
     @OneToMany(mappedBy="tool")
-    @OrderColumn
     private List<ToolExecution> executions = new ArrayList<ToolExecution>();
 
     @Getter
     @Setter
     @ManyToMany(mappedBy = "tools")
-    private List<Application> applications = new ArrayList<Application>();
+    private List<Application> applications = new ArrayList<Application>(); */
 
     public Tool(JstacsTool tool) {
         this.type = tool.getClass().getName();

@@ -1,5 +1,7 @@
 package de.jstacs.service.data.entities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +10,7 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import de.jstacs.service.utils.toolexecution.ToolExecutionState;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -53,7 +56,7 @@ public class ToolExecution {
 
     @Getter
     @Setter
-    private State state = State.PENDING;
+    private ToolExecutionState state = ToolExecutionState.INITIALIZED;
 
     @Column(columnDefinition = "TEXT")
     @Getter
@@ -65,8 +68,7 @@ public class ToolExecution {
     @Setter
     private String[] results = {};
 
-    public enum State {
-        PENDING, FULFILLED, REJECTED
-    }
+    @Getter
+    private final Date createdAt = new Date();
 
 }

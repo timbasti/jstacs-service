@@ -1,7 +1,6 @@
 package de.jstacs.service.endpoints;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -46,8 +45,8 @@ public class ApplicationsEndpoint {
             Tool tool = this.toolRepository.findById(toolId).get();
             application.getTools().add(tool);
         });
-        this.applicationRepository.saveAndFlush(application);
-        log.debug("Created: " + creationValues.getName());
+        this.applicationRepository.save(application);
+        log.debug("Created: " + application.getName());
         return this.applicationRepository.findAll();
     }
 
@@ -61,7 +60,7 @@ public class ApplicationsEndpoint {
             tools.add(tool);
         });
         application.setTools(tools);
-        this.applicationRepository.saveAndFlush(application);
+        this.applicationRepository.save(application);
         log.debug("Updated: " + application.getName());
         return this.applicationRepository.findAll();
     }

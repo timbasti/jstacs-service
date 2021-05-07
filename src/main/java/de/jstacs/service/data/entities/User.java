@@ -29,7 +29,6 @@ public class User {
     @OneToMany(mappedBy="user")
     @Getter
     @Setter
-    @OrderColumn
     private List<ToolExecution> executions = new ArrayList<ToolExecution>();
     
 }

@@ -18,8 +18,8 @@ public class ToolSerializer extends JsonSerializer<Tool> {
 
     @Override
     public void serialize(Tool tool, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
-        List<Application> relatedApplications = tool.getApplications();
-        List<ToolExecution> toolExecutions = tool.getExecutions();
+        /* List<Application> relatedApplications = tool.getApplications();
+        List<ToolExecution> toolExecutions = tool.getExecutions(); */
         String toolDescription = tool.getDescription();
         Long toolId = tool.getId();
         String toolName = tool.getName();
@@ -39,7 +39,7 @@ public class ToolSerializer extends JsonSerializer<Tool> {
         jsonGenerator.writeStringField("description", toolDescription);
         jsonGenerator.writeFieldName("references");
         jsonGenerator.writeArray(toolReferences, 0, toolReferences.length);
-        jsonGenerator.writeArrayFieldStart("applications");
+        /* jsonGenerator.writeArrayFieldStart("applications");
         for (Application application : relatedApplications) {
             jsonGenerator.writeNumber(application.getId());
         }
@@ -48,7 +48,7 @@ public class ToolSerializer extends JsonSerializer<Tool> {
         for (ToolExecution toolExecution : toolExecutions) {
             jsonGenerator.writeNumber(toolExecution.getId());
         }
-        jsonGenerator.writeEndArray();
+        jsonGenerator.writeEndArray(); */
         jsonGenerator.writeEndObject();
     }
     

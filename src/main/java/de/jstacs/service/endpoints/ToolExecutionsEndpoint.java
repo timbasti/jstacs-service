@@ -3,7 +3,6 @@ package de.jstacs.service.endpoints;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,11 +47,11 @@ public class ToolExecutionsEndpoint {
         Long toolId = executionValues.getToolId();
         Optional<User> optionalUser = this.userRepository.findById(userId);
         Optional<Tool> optionalTool = this.toolRepository.findById(toolId);
-        ToolExecution toolExecution = new ToolExecution(optionalTool.get(), optionalUser.get());
-        this.toolExecutionRepository.save(toolExecution);
+        ToolExecution newToolExecution = new ToolExecution(optionalTool.get(), optionalUser.get());
+        this.toolExecutionRepository.save(newToolExecution);
         Map<String, String> responseData = new HashMap<String, String>();
-        responseData.put("toolExecutionId", toolExecution.getId());
-        log.info("Created: " + toolExecution.getId());
+        responseData.put("toolExecutionId", newToolExecution.getId());
+        log.info("Created: " + newToolExecution.getId());
         return responseData;
     }
 
@@ -68,7 +67,7 @@ public class ToolExecutionsEndpoint {
             @RequestHeader("user-id") String userId) throws Exception {
         ToolExecutionTask toolTask = this.toolExecutionTaskFactory.create(toolExecutionId, values);
         ToolParameterSet toolParameterSet = toolTask.getToolParameterSet();
-        this.toolService.execute(toolTask);
+        this.toolService.execute(toolExecutionId, toolTask);
         return toolParameterSet;
     }
 

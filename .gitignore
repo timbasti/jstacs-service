@@ -40,4 +40,7 @@ out/
 app.jar
 
 ### Uploaded files ###
-/upload/
+/files/
+
+### DB ###
+/db/

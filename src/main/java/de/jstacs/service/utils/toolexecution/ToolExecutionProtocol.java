@@ -19,11 +19,11 @@ public class ToolExecutionProtocol implements Protocol{
         String executionName = this.toolExecution.getName();
         String protocol = executionName.isEmpty() ? "# Execution for " + this.toolExecution.getTool().getName() : executionName;
         this.toolExecution.setProtocol(protocol);
-        this.toolExecutionRepository.save(this.toolExecution);
+        this.flush();
     }
 
     @Override
-    public void flush() throws IOException {
+    public void flush() {
         this.toolExecutionRepository.save(this.toolExecution);
     }
 
@@ -32,6 +32,7 @@ public class ToolExecutionProtocol implements Protocol{
         String currentProtocol = this.toolExecution.getProtocol();
         String nextProtocol = currentProtocol + "\n" + text;
         this.toolExecution.setProtocol(nextProtocol);
+        this.flush();
     }
 
     @Override
@@ -40,6 +41,7 @@ public class ToolExecutionProtocol implements Protocol{
         String currentProtocol = this.toolExecution.getProtocol();
         String nextProtocol = currentProtocol + "\n" + newProtocolEntry;
         this.toolExecution.setProtocol(nextProtocol);
+        this.flush();
     }
 
     @Override
@@ -48,6 +50,7 @@ public class ToolExecutionProtocol implements Protocol{
         String currentProtocol = this.toolExecution.getProtocol();
         String nextProtocol = currentProtocol + "\n" + newProtocolEntry;
         this.toolExecution.setProtocol(nextProtocol);
+        this.flush();
     }
 
     @Override
@@ -56,6 +59,7 @@ public class ToolExecutionProtocol implements Protocol{
         String currentProtocol = this.toolExecution.getProtocol();
         String nextProtocol = currentProtocol + "\n" + newProtocolEntry;
         this.toolExecution.setProtocol(nextProtocol);
+        this.flush();
     }
 
     @Override
@@ -64,6 +68,7 @@ public class ToolExecutionProtocol implements Protocol{
         String currentProtocol = this.toolExecution.getProtocol();
         String nextProtocol = currentProtocol + "\n" + newProtocolEntry;
         this.toolExecution.setProtocol(nextProtocol);
+        this.flush();
     }
     
 }
