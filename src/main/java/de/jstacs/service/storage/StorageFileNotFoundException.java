@@ -2,14 +2,20 @@ package de.jstacs.service.storage;
 
 public class StorageFileNotFoundException extends StorageException {
 
-    private static final long serialVersionUID = -997343490138519294L;
+    public StorageFileNotFoundException() {
+        super();
+    }
+
+    public StorageFileNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
     public StorageFileNotFoundException(String message) {
-		super(message);
-	}
+        super(message);
+    }
 
-	public StorageFileNotFoundException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public StorageFileNotFoundException(Throwable cause) {
+        super(cause);
+    }
     
 }

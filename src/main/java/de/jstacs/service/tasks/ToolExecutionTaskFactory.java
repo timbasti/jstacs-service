@@ -28,6 +28,7 @@ import de.jstacs.service.storage.StorageProperties;
 import de.jstacs.service.storage.StorageService;
 import de.jstacs.service.utils.toolexecution.ToolExecutionProgressUpdater;
 import de.jstacs.service.utils.toolexecution.ToolExecutionProtocol;
+import de.jstacs.service.utils.toolexecution.ToolExecutionState;
 import de.jstacs.tools.JstacsTool;
 import de.jstacs.tools.ProgressUpdater;
 import de.jstacs.tools.Protocol;
@@ -54,7 +55,13 @@ public class ToolExecutionTaskFactory {
         Optional<ToolExecution> optionalToolExecution = this.toolExecutionRepository.findById(toolExecutionId);
 
         ToolExecution toolExecution = optionalToolExecution.get();
+
+        if (!(toolExecution.getState() == ToolExecutionState.INITIALIZED)) {
+            throw new TaskAlreadyRunningException("State of given ToolExecution is not INITIALIZED. Task already started.");
+        }
+
         toolExecution.setParameterValues(parameterValues);
+        toolExecution = this.toolExecutionRepository.save(toolExecution);
 
         TypeFactory typeFactory = this.objectMapper.getTypeFactory();
         MapType mapType = typeFactory.constructMapType(HashMap.class, String.class, Object.class);
@@ -65,15 +72,14 @@ public class ToolExecutionTaskFactory {
         ToolParameterSet parameterSet = jstacsTool.getToolParameters();
         this.updateParameterSet(parameterSet, deserializedValues);
 
-        Protocol protocol = new ToolExecutionProtocol(toolExecution, this.toolExecutionRepository);
-        ProgressUpdater progressUpdater = new ToolExecutionProgressUpdater(toolExecution, this.toolExecutionRepository);
-
         String rootLocation = this.storageProperties.getRootLocation();
         String resultsLocation = this.storageProperties.getResultsLocation();
         Path resultDirectoryPath = Paths.get(rootLocation, toolExecution.getUser().getId(), toolExecutionId,
                 resultsLocation);
 
-        this.toolExecutionRepository.save(toolExecution);
+        Protocol protocol = new ToolExecutionProtocol(toolExecution, this.toolExecutionRepository);
+        ProgressUpdater progressUpdater = new ToolExecutionProgressUpdater(toolExecution, this.toolExecutionRepository);
+
         ToolExecutionTask toolTask = new ToolExecutionTask(jstacsTool, parameterSet, protocol, progressUpdater,
                 resultDirectoryPath, storageService);
         return toolTask;

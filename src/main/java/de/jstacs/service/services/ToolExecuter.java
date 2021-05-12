@@ -21,16 +21,16 @@ public class ToolExecuter {
     public void execute(String toolExecutionId, final ToolExecutionTask newTask) {
         ToolExecution toolExecution = this.toolExecutionRepository.findById(toolExecutionId).get();
         toolExecution.setState(ToolExecutionState.PENDING);
-        // toolExecution = toolExecutionRepository.save(toolExecution);
+        toolExecution = toolExecutionRepository.save(toolExecution);
         try {
             String[] resultFiles = newTask.call();
             toolExecution.setResults(resultFiles);
             toolExecution.setState(ToolExecutionState.FULFILLED);
-            toolExecutionRepository.save(toolExecution);
+            toolExecutionRepository.saveAndFlush(toolExecution);
             log.debug("Created " + resultFiles.length + " result files for " + newTask.getToolName());
         } catch (Exception e) {
             toolExecution.setState(ToolExecutionState.REJECTED);
-            toolExecutionRepository.save(toolExecution);
+            toolExecutionRepository.saveAndFlush(toolExecution);
         }
     }
 

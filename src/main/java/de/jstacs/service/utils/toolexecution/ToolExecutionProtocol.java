@@ -6,7 +6,7 @@ import de.jstacs.tools.Protocol;
 
 public class ToolExecutionProtocol implements Protocol{
 
-    private final ToolExecution toolExecution;
+    private ToolExecution toolExecution;
 
     private final ToolExecutionRepository toolExecutionRepository;
 
@@ -22,7 +22,7 @@ public class ToolExecutionProtocol implements Protocol{
 
     @Override
     public void flush() {
-        this.toolExecutionRepository.save(this.toolExecution);
+        this.toolExecution = this.toolExecutionRepository.save(this.toolExecution);
     }
 
     @Override
