@@ -2,7 +2,6 @@ package de.jstacs.service.endpoints;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

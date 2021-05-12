@@ -16,8 +16,6 @@ public class ToolExecutionSerializer extends JsonSerializer<ToolExecution> {
     @Override
     public void serialize(ToolExecution toolExecution, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
         String executionId = toolExecution.getId();
-        // Long toolId = toolExecution.getTool().getId();
-        // String userId = toolExecution.getUser().getId();
         String parameterValues = toolExecution.getParameterValues();
         Double progress = toolExecution.getProgress();
         String protocol = toolExecution.getProtocol();
@@ -26,8 +24,6 @@ public class ToolExecutionSerializer extends JsonSerializer<ToolExecution> {
 
         jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField("id", executionId);
-        // jsonGenerator.writeStringField("userId", userId);
-        // jsonGenerator.writeNumberField("toolId", toolId);
         jsonGenerator.writeStringField("parameterValues", parameterValues);
         jsonGenerator.writeNumberField("progress", progress);
         jsonGenerator.writeStringField("protocol", protocol);

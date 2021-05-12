@@ -1,14 +1,12 @@
 package de.jstacs.service.utils.toolexecution;
 
-import java.io.IOException;
-
 import de.jstacs.service.data.entities.ToolExecution;
 import de.jstacs.service.data.repositories.ToolExecutionRepository;
 import de.jstacs.tools.Protocol;
 
 public class ToolExecutionProtocol implements Protocol{
 
-    private final ToolExecution toolExecution;
+    private ToolExecution toolExecution;
 
     private final ToolExecutionRepository toolExecutionRepository;
 
@@ -19,12 +17,12 @@ public class ToolExecutionProtocol implements Protocol{
         String executionName = this.toolExecution.getName();
         String protocol = executionName.isEmpty() ? "# Execution for " + this.toolExecution.getTool().getName() : executionName;
         this.toolExecution.setProtocol(protocol);
-        this.toolExecutionRepository.save(this.toolExecution);
+        this.flush();
     }
 
     @Override
-    public void flush() throws IOException {
-        this.toolExecutionRepository.save(this.toolExecution);
+    public void flush() {
+        this.toolExecution = this.toolExecutionRepository.save(this.toolExecution);
     }
 
     @Override
@@ -32,6 +30,7 @@ public class ToolExecutionProtocol implements Protocol{
         String currentProtocol = this.toolExecution.getProtocol();
         String nextProtocol = currentProtocol + "\n" + text;
         this.toolExecution.setProtocol(nextProtocol);
+        this.flush();
     }
 
     @Override
@@ -40,6 +39,7 @@ public class ToolExecutionProtocol implements Protocol{
         String currentProtocol = this.toolExecution.getProtocol();
         String nextProtocol = currentProtocol + "\n" + newProtocolEntry;
         this.toolExecution.setProtocol(nextProtocol);
+        this.flush();
     }
 
     @Override
@@ -48,6 +48,7 @@ public class ToolExecutionProtocol implements Protocol{
         String currentProtocol = this.toolExecution.getProtocol();
         String nextProtocol = currentProtocol + "\n" + newProtocolEntry;
         this.toolExecution.setProtocol(nextProtocol);
+        this.flush();
     }
 
     @Override
@@ -56,6 +57,7 @@ public class ToolExecutionProtocol implements Protocol{
         String currentProtocol = this.toolExecution.getProtocol();
         String nextProtocol = currentProtocol + "\n" + newProtocolEntry;
         this.toolExecution.setProtocol(nextProtocol);
+        this.flush();
     }
 
     @Override
@@ -64,6 +66,7 @@ public class ToolExecutionProtocol implements Protocol{
         String currentProtocol = this.toolExecution.getProtocol();
         String nextProtocol = currentProtocol + "\n" + newProtocolEntry;
         this.toolExecution.setProtocol(nextProtocol);
+        this.flush();
     }
     
 }

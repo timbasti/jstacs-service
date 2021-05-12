@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -29,7 +28,6 @@ public class User {
     @OneToMany(mappedBy="user")
     @Getter
     @Setter
-    @OrderColumn
     private List<ToolExecution> executions = new ArrayList<ToolExecution>();
     
 }

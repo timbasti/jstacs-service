@@ -77,6 +77,11 @@ public class FileSystemStorageService implements StorageService {
         } else {
             filePath = rootLocation.resolve(filePath);
         }
+
+        if (!filePath.toFile().exists()) {
+            throw new StorageException("Given file name does not exist.");
+        }
+        
         return filePath;
     }
 
@@ -98,8 +103,17 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public Path locate(String fileName) {
-        Path loadedPath = this.load(fileName);
-        return rootLocation.relativize(loadedPath);
+        Path filePath = Paths.get(fileName).toAbsolutePath();
+        if (!filePath.startsWith(this.rootLocation)) {
+            // This is a security check
+            throw new StorageException("Cannot locate file outside storage directory.");
+        }
+
+        if (!filePath.toFile().exists()) {
+            throw new StorageException("Given file name does not exist.");
+        }
+
+        return rootLocation.relativize(filePath);
     }
 
     @Override

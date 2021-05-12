@@ -1,6 +1,8 @@
 package de.jstacs.service.tasks;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -22,9 +24,11 @@ import de.jstacs.parameters.SimpleParameter.IllegalValueException;
 import de.jstacs.service.data.entities.ToolExecution;
 import de.jstacs.service.data.repositories.ToolExecutionRepository;
 import de.jstacs.service.services.ToolLoader;
+import de.jstacs.service.storage.StorageProperties;
 import de.jstacs.service.storage.StorageService;
 import de.jstacs.service.utils.toolexecution.ToolExecutionProgressUpdater;
 import de.jstacs.service.utils.toolexecution.ToolExecutionProtocol;
+import de.jstacs.service.utils.toolexecution.ToolExecutionState;
 import de.jstacs.tools.JstacsTool;
 import de.jstacs.tools.ProgressUpdater;
 import de.jstacs.tools.Protocol;
@@ -37,20 +41,27 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ToolExecutionTaskFactory {
 
+    private final StorageProperties storageProperties;
+
+    private final StorageService storageService;
+
     private final ObjectMapper objectMapper;
 
     private final ToolExecutionRepository toolExecutionRepository;
 
     private final ToolLoader toolLoader;
 
-    private final StorageService storageService;
-
     public ToolExecutionTask create(String toolExecutionId, String parameterValues) throws Exception {
         Optional<ToolExecution> optionalToolExecution = this.toolExecutionRepository.findById(toolExecutionId);
 
         ToolExecution toolExecution = optionalToolExecution.get();
+
+        if (!(toolExecution.getState() == ToolExecutionState.INITIALIZED)) {
+            throw new TaskAlreadyRunningException("State of given ToolExecution is not INITIALIZED. Task already started.");
+        }
+
         toolExecution.setParameterValues(parameterValues);
-        this.toolExecutionRepository.save(toolExecution);
+        toolExecution = this.toolExecutionRepository.save(toolExecution);
 
         TypeFactory typeFactory = this.objectMapper.getTypeFactory();
         MapType mapType = typeFactory.constructMapType(HashMap.class, String.class, Object.class);
@@ -61,10 +72,16 @@ public class ToolExecutionTaskFactory {
         ToolParameterSet parameterSet = jstacsTool.getToolParameters();
         this.updateParameterSet(parameterSet, deserializedValues);
 
+        String rootLocation = this.storageProperties.getRootLocation();
+        String resultsLocation = this.storageProperties.getResultsLocation();
+        Path resultDirectoryPath = Paths.get(rootLocation, toolExecution.getUser().getId(), toolExecutionId,
+                resultsLocation);
+
         Protocol protocol = new ToolExecutionProtocol(toolExecution, this.toolExecutionRepository);
         ProgressUpdater progressUpdater = new ToolExecutionProgressUpdater(toolExecution, this.toolExecutionRepository);
 
-        ToolExecutionTask toolTask = new ToolExecutionTask(toolExecution, jstacsTool, parameterSet, protocol, progressUpdater);
+        ToolExecutionTask toolTask = new ToolExecutionTask(jstacsTool, parameterSet, protocol, progressUpdater,
+                resultDirectoryPath, storageService);
         return toolTask;
     }
 
@@ -114,45 +131,45 @@ public class ToolExecutionTaskFactory {
     private void updatePrimitiveParameterValue(Parameter parameter, Object newValue) throws IllegalValueException {
         DataType dataType = parameter.getDatatype();
         switch (dataType) {
-        case CHAR:
-        case STRING:
-            parameter.setValue((String) newValue);
-            break;
-        case BOOLEAN:
-            parameter.setValue((Boolean) newValue);
-            break;
-        case BYTE: {
-            Number numberValue = (Number) newValue;
-            parameter.setValue(numberValue.byteValue());
-            break;
-        }
-        case SHORT: {
-            Number numberValue = (Number) newValue;
-            parameter.setValue(numberValue.shortValue());
-            break;
-        }
-        case INT: {
-            Number numberValue = (Number) newValue;
-            parameter.setValue(numberValue.intValue());
-            break;
-        }
-        case LONG: {
-            Number numberValue = (Number) newValue;
-            parameter.setValue(numberValue.longValue());
-            break;
-        }
-        case FLOAT: {
-            Number numberValue = (Number) newValue;
-            parameter.setValue(numberValue.floatValue());
-            break;
-        }
-        case DOUBLE: {
-            Number numberValue = (Number) newValue;
-            parameter.setValue(numberValue.doubleValue());
-            break;
-        }
-        default:
-            parameter.setValue(newValue);
+            case CHAR:
+            case STRING:
+                parameter.setValue((String) newValue);
+                break;
+            case BOOLEAN:
+                parameter.setValue((Boolean) newValue);
+                break;
+            case BYTE: {
+                Number numberValue = (Number) newValue;
+                parameter.setValue(numberValue.byteValue());
+                break;
+            }
+            case SHORT: {
+                Number numberValue = (Number) newValue;
+                parameter.setValue(numberValue.shortValue());
+                break;
+            }
+            case INT: {
+                Number numberValue = (Number) newValue;
+                parameter.setValue(numberValue.intValue());
+                break;
+            }
+            case LONG: {
+                Number numberValue = (Number) newValue;
+                parameter.setValue(numberValue.longValue());
+                break;
+            }
+            case FLOAT: {
+                Number numberValue = (Number) newValue;
+                parameter.setValue(numberValue.floatValue());
+                break;
+            }
+            case DOUBLE: {
+                Number numberValue = (Number) newValue;
+                parameter.setValue(numberValue.doubleValue());
+                break;
+            }
+            default:
+                parameter.setValue(newValue);
         }
     }
 

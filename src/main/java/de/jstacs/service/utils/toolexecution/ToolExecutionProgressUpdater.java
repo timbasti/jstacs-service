@@ -6,7 +6,7 @@ import de.jstacs.tools.ProgressUpdater;
 
 public class ToolExecutionProgressUpdater extends ProgressUpdater {
 
-    private final ToolExecution toolExecution;
+    private ToolExecution toolExecution;
 
     private final ToolExecutionRepository toolExecutionRepository;
 
@@ -23,7 +23,7 @@ public class ToolExecutionProgressUpdater extends ProgressUpdater {
         }
 
         this.toolExecution.setProgress(newProgress);
-        this.toolExecutionRepository.save(this.toolExecution);
+        this.toolExecution = this.toolExecutionRepository.save(this.toolExecution);
     }
 
     @Override
