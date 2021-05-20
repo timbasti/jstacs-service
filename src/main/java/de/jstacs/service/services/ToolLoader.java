@@ -31,7 +31,7 @@ public class ToolLoader {
 
     public List<JstacsTool> loadAll() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         ClassLoader classLoader = this.getClass().getClassLoader();
-        Reflections reflections = new Reflections("projects");
+        Reflections reflections = new Reflections("projects", "de.jstacs.service.projects");
         Set<Class<? extends JstacsTool>> subTypes = reflections.getSubTypesOf(JstacsTool.class);
         List<JstacsTool> loadedTools = new ArrayList<JstacsTool>();
         for (Class<? extends JstacsTool> toolType : subTypes) {

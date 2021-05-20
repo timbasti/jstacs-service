@@ -34,7 +34,7 @@ public class ApplicationsEndpoint {
     private final ApplicationRepository applicationRepository;
 
     @GetMapping
-    public List<Application> getApplications() {
+    public List<Application> listApplications() {
         return this.applicationRepository.findAll();
     }
 

@@ -34,7 +34,7 @@ public class FilesEndpoint {
     private final StorageService storageService;
 
     @PostMapping
-    public Map<String, String> setFileParameterContent(@RequestParam("file") MultipartFile file,
+    public Map<String, String> saveFile(@RequestParam("file") MultipartFile file,
             @RequestParam("toolExecutionId") String toolExecutionId, @RequestHeader("user-id") String userId) {
         Map<String, String> response = new HashMap<String, String>();
         Path destinationDirectory = Paths.get(userId, toolExecutionId);
@@ -45,7 +45,7 @@ public class FilesEndpoint {
     }
 
     @GetMapping
-    public ResponseEntity<Resource> serveFile(@RequestParam String file) {
+    public ResponseEntity<Resource> loadFile(@RequestParam String file) {
         Resource fileResource = storageService.loadAsResource(file);
 
         String mediaType = new String();

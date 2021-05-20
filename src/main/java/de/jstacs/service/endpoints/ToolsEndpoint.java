@@ -29,7 +29,7 @@ public class ToolsEndpoint {
     private final ToolLoader toolLoader;
 
     @GetMapping
-    public List<ToolOverview> getAllToolNames() {
+    public List<ToolOverview> listTools() {
         List<ToolOverview> availableTools = new ArrayList<ToolOverview>();
         List<Tool> tools = this.toolRepository.findAll();
         tools.forEach((tool) -> {
@@ -40,7 +40,7 @@ public class ToolsEndpoint {
     }
 
     @GetMapping("{toolId}")
-    public ToolValues getTool(@PathVariable Long toolId)
+    public ToolValues loadTool(@PathVariable Long toolId)
             throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Tool tool = this.toolRepository.findById(toolId).get();

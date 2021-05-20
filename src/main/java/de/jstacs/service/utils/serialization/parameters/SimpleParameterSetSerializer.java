@@ -17,17 +17,13 @@ public class SimpleParameterSetSerializer extends JsonSerializer<SimpleParameter
     @Override
     public void serialize(SimpleParameterSet parameterSet, JsonGenerator jsonGenerator, SerializerProvider serializers)
             throws IOException {
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField("type", parameterSet.getClass().getTypeName());
-        jsonGenerator.writeBooleanField("isAtomic", parameterSet.isAtomic());
-        jsonGenerator.writeArrayFieldStart("parameters");
+        jsonGenerator.writeStartArray();
         int numberOfParameters = parameterSet.getNumberOfParameters();
         for (int i = 0; i < numberOfParameters; i++) {
             Parameter parameter = parameterSet.getParameterAt(i);
             jsonGenerator.writeObject(parameter);
         }
         jsonGenerator.writeEndArray();
-        jsonGenerator.writeEndObject();
     }
 
 }
