@@ -59,7 +59,7 @@ public class ToolExecutionsEndpoint {
     }
 
     @GetMapping("{toolExecutionId}")
-    public ToolExecution getToolExecution(@PathVariable String toolExecutionId,
+    public ToolExecution loadToolExecution(@PathVariable String toolExecutionId,
             @RequestHeader("user-id") String userId) throws Exception {
         Optional<ToolExecution> optionalToolExecution = this.toolExecutionRepository.findById(toolExecutionId);
         return optionalToolExecution.get();

@@ -115,7 +115,7 @@ public class ToolExecutionTaskFactory {
     private void updateParameterValue(Parameter parameter, Object newValue) throws IllegalValueException, IOException {
         if (parameter instanceof AbstractSelectionParameter) {
             Map<String, Object> selectionParameterValues = (Map<String, Object>) newValue;
-            String selectedName = (String) selectionParameterValues.get("selectedName");
+            String selectedName = (String) selectionParameterValues.get("selected");
             parameter.setValue(selectedName);
         } else if (parameter instanceof FileParameter) {
             Map<String, Object> fileParameterValues = (Map<String, Object>) newValue;

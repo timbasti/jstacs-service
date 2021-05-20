@@ -33,7 +33,7 @@ public class SelectionParameterDeserializer extends JsonDeserializer<SelectionPa
         JsonNode dataTypeNode = rootNode.get("dataType");
         JsonNode commentNode = rootNode.get("comment");
         JsonNode requiredNode = rootNode.get("required");
-        JsonNode selectedNameNode = rootNode.get("selectedName");
+        JsonNode selectedNameNode = rootNode.get("selected");
         JsonNode parametersInCollectionNode = rootNode.get("parametersInCollection");
 
         JsonParser parametersInCollectionJsonParser = parametersInCollectionNode.traverse();
