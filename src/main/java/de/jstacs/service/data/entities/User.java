@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -19,15 +20,15 @@ import lombok.Setter;
 public class User {
 
     @Id
+    @Getter
+    @Setter
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Getter
-    @Setter
     private String id;
 
-    @OneToMany(mappedBy="user")
     @Getter
     @Setter
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<ToolExecution> executions = new ArrayList<ToolExecution>();
     
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -23,31 +24,36 @@ import lombok.Setter;
 public class ToolExecution {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Getter
     @Setter
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
     @Getter
     @Setter
     private String name = "";
 
-    @ManyToOne
     @NonNull
     @Getter
     @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
     private Tool tool;
 
-    @ManyToOne
     @NonNull
     @Getter
     @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @Column(columnDefinition = "TEXT")
     @Getter
     @Setter
+    @Column(columnDefinition = "TEXT")
+    private String notes = "";
+
+    @Getter
+    @Setter
+    @Column(columnDefinition = "TEXT")
     private String parameterValues = "{}";
 
     @Getter
@@ -58,14 +64,14 @@ public class ToolExecution {
     @Setter
     private ToolExecutionState state = ToolExecutionState.INITIALIZED;
 
-    @Column(columnDefinition = "TEXT")
     @Getter
     @Setter
+    @Column(columnDefinition = "TEXT")
     private String protocol = "";
 
-    @Column(columnDefinition = "BLOB")
     @Getter
     @Setter
+    @Column(columnDefinition = "BLOB")
     private String[] results = {};
 
     @Getter

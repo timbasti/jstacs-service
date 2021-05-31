@@ -11,4 +11,8 @@ public class ExecutionValues {
     @NonNull
     private Long toolId;
 
+    private String executionName = "";
+
+    private String executionNotes = "";
+
 }

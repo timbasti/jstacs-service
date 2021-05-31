@@ -18,12 +18,12 @@ public class ToolExecuter {
     private final ToolExecutionRepository toolExecutionRepository;
 
     @Async
-    public void execute(String toolExecutionId, final ToolExecutionTask newTask) {
-        ToolExecution toolExecution = this.toolExecutionRepository.findById(toolExecutionId).get();
+    public void execute(final ToolExecutionTask newTask) {
+        ToolExecution toolExecution = newTask.getToolExecution();
         toolExecution.setState(ToolExecutionState.PENDING);
-        toolExecution = toolExecutionRepository.save(toolExecution);
+        toolExecutionRepository.save(toolExecution);
         try {
-            String[] resultFiles = newTask.call();
+            String[] resultFiles = newTask.call();            
             toolExecution.setResults(resultFiles);
             toolExecution.setState(ToolExecutionState.FULFILLED);
             toolExecutionRepository.saveAndFlush(toolExecution);

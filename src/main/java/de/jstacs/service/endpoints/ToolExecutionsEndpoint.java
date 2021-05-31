@@ -1,6 +1,7 @@
 package de.jstacs.service.endpoints;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -45,17 +47,30 @@ public class ToolExecutionsEndpoint {
     private final ToolExecutionTaskFactory toolExecutionTaskFactory;
 
     @PostMapping
-    public Map<String, String> createToolExecution(@RequestBody ExecutionValues executionValues, @RequestHeader("user-id") String userId)
-            throws Exception {
+    public Map<String, String> createToolExecution(@RequestBody ExecutionValues executionValues,
+            @RequestHeader("user-id") String userId) throws Exception {
         Long toolId = executionValues.getToolId();
         Optional<User> optionalUser = this.userRepository.findById(userId);
         Optional<Tool> optionalTool = this.toolRepository.findById(toolId);
         ToolExecution newToolExecution = new ToolExecution(optionalTool.get(), optionalUser.get());
-        newToolExecution = this.toolExecutionRepository.save(newToolExecution);
+        String executionName = executionValues.getExecutionName();
+        String executionNotes = executionValues.getExecutionNotes();
+        newToolExecution.setName(executionName);
+        newToolExecution.setNotes(executionNotes);
+        newToolExecution = this.toolExecutionRepository.saveAndFlush(newToolExecution);
         Map<String, String> responseData = new HashMap<String, String>();
         responseData.put("toolExecutionId", newToolExecution.getId());
         log.info("Created: " + newToolExecution.getId());
         return responseData;
+    }
+
+    @GetMapping
+    public List<ToolExecution> listToolExecutions(@RequestParam("tool-id") Long toolId,
+            @RequestHeader("user-id") String userId) throws Exception {
+        Tool tool = this.toolRepository.findById(toolId).get();
+        User user = this.userRepository.findById(userId).get();
+        List<ToolExecution> toolExecutions = this.toolExecutionRepository.findAllByUserAndTool(user, tool);
+        return toolExecutions;
     }
 
     @GetMapping("{toolExecutionId}")
@@ -71,10 +86,11 @@ public class ToolExecutionsEndpoint {
         try {
             ToolExecutionTask toolTask = this.toolExecutionTaskFactory.create(toolExecutionId, values);
             ToolParameterSet toolParameterSet = toolTask.getToolParameterSet();
-            this.toolService.execute(toolExecutionId, toolTask);
+            this.toolService.execute(toolTask);
             return toolParameterSet;
         } catch (TaskAlreadyRunningException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Update of ToolExecution not possible. Task already created.", e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Update of ToolExecution not possible. Task already created.", e);
         }
     }
 

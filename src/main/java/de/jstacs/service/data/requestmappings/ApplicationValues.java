@@ -8,7 +8,7 @@ import lombok.NonNull;
 
 @Data
 @NoArgsConstructor
-public class ApplicationCreationValues {
+public class ApplicationValues {
 
     @NonNull
     private String name;

@@ -17,13 +17,8 @@ public class ToolExecutionProgressUpdater extends ProgressUpdater {
 
     private void updateProgress() {
         double newProgress = this.getPercentage();
-
-        if (newProgress == -1) {
-            return;
-        }
-
         this.toolExecution.setProgress(newProgress);
-        this.toolExecution = this.toolExecutionRepository.save(this.toolExecution);
+        this.toolExecutionRepository.save(this.toolExecution);
     }
 
     @Override
@@ -35,6 +30,18 @@ public class ToolExecutionProgressUpdater extends ProgressUpdater {
     @Override
     public void add(double val) {
         super.add(val);
+        this.updateProgress();
+    }
+
+    @Override
+    public void setLast(double last) {
+        super.setLast(last);
+        this.updateProgress();
+    }
+
+    @Override
+    public void setIndeterminate() {
+        super.setIndeterminate();
         this.updateProgress();
     }
 
