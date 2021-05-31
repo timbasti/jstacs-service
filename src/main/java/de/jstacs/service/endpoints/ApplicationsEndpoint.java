@@ -18,8 +18,8 @@ import de.jstacs.service.data.entities.Application;
 import de.jstacs.service.data.entities.Tool;
 import de.jstacs.service.data.repositories.ApplicationRepository;
 import de.jstacs.service.data.repositories.ToolRepository;
-import de.jstacs.service.data.requestmappings.ApplicationCreationValues;
-import de.jstacs.service.data.requestmappings.ApplicationUpdateValues;
+import de.jstacs.service.data.requestmappings.ApplicationValues;
+import de.jstacs.service.services.ToolLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,28 +39,29 @@ public class ApplicationsEndpoint {
     }
 
     @PostMapping
-    public List<Application> createApplication(@RequestBody ApplicationCreationValues creationValues) {
+    public List<Application> createApplication(@RequestBody ApplicationValues creationValues) {
         Application application = new Application(creationValues.getName());
         creationValues.getToolIds().forEach((toolId) -> {
             Tool tool = this.toolRepository.findById(toolId).get();
             application.getTools().add(tool);
         });
-        this.applicationRepository.save(application);
+        this.applicationRepository.saveAndFlush(application);
         log.debug("Created: " + application.getName());
         return this.applicationRepository.findAll();
     }
 
     @PutMapping("{applicationId}")
-    public List<Application> updateApplication(@PathVariable Long applicationId, @RequestBody ApplicationUpdateValues updateValues) {
-        Set<Long> toolIds = updateValues.getToolIds();
+    public List<Application> updateApplication(@PathVariable Long applicationId,
+            @RequestBody ApplicationValues updateValues) {
         Application application = this.applicationRepository.findById(applicationId).get();
         List<Tool> tools = new ArrayList<Tool>();
-        toolIds.forEach((toolId) -> {
+        updateValues.getToolIds().forEach((toolId) -> {
             Tool tool = this.toolRepository.findById(toolId).get();
             tools.add(tool);
         });
         application.setTools(tools);
-        this.applicationRepository.save(application);
+        application.setName(updateValues.getName());
+        this.applicationRepository.saveAndFlush(application);
         log.debug("Updated: " + application.getName());
         return this.applicationRepository.findAll();
     }

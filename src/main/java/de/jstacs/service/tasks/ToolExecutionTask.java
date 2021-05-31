@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 import de.jstacs.results.savers.ResultSaver;
 import de.jstacs.results.savers.ResultSaverLibrary;
 import de.jstacs.results.savers.ResultSetResultSaver;
+import de.jstacs.service.data.entities.ToolExecution;
 import de.jstacs.service.storage.StorageService;
 import de.jstacs.tools.JstacsTool;
 import de.jstacs.tools.ProgressUpdater;
@@ -21,11 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ToolExecutionTask implements Callable<String[]> {
-
-    private final JstacsTool jstacsTool;
-
+    
     @Getter
     private final ToolParameterSet toolParameterSet;
+
+    @Getter
+    private final ToolExecution toolExecution;
+
+    private final JstacsTool jstacsTool;
 
     private final Protocol protocol;
 
@@ -37,13 +41,14 @@ public class ToolExecutionTask implements Callable<String[]> {
 
     public ToolExecutionTask(final JstacsTool jstacsTool, final ToolParameterSet toolParameterSet,
             final Protocol protocol, final ProgressUpdater progressUpdater, final Path resultDirectoryPath,
-            final StorageService storageService) {
+            final StorageService storageService, final ToolExecution toolExecution) {
         this.jstacsTool = jstacsTool;
         this.toolParameterSet = toolParameterSet;
         this.protocol = protocol;
         this.progressUpdater = progressUpdater;
         this.resultDirectoryPath = resultDirectoryPath;
         this.storageService = storageService;
+        this.toolExecution = toolExecution;
         log.debug("Created ToolTask for: " + jstacsTool.getToolName());
     }
 

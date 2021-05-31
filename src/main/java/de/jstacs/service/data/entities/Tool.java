@@ -22,9 +22,9 @@ public class Tool {
     private Long id;
 
     @NonNull
-    @Column(unique = true)
     @Getter
     @Setter
+    @Column(unique = true)
     private String type;
 
     @NonNull

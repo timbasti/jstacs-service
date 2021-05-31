@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.jstacs.DataType;
 import de.jstacs.parameters.AbstractSelectionParameter;
@@ -38,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 
 @SuppressWarnings({ "unchecked" })
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ToolExecutionTaskFactory {
 
@@ -52,16 +54,14 @@ public class ToolExecutionTaskFactory {
     private final ToolLoader toolLoader;
 
     public ToolExecutionTask create(String toolExecutionId, String parameterValues) throws Exception {
-        Optional<ToolExecution> optionalToolExecution = this.toolExecutionRepository.findById(toolExecutionId);
+        ToolExecution toolExecution = this.toolExecutionRepository.findById(toolExecutionId).get();
 
-        ToolExecution toolExecution = optionalToolExecution.get();
-
-        if (!(toolExecution.getState() == ToolExecutionState.INITIALIZED)) {
+        if (toolExecution.getState() != ToolExecutionState.INITIALIZED) {
             throw new TaskAlreadyRunningException("State of given ToolExecution is not INITIALIZED. Task already started.");
         }
 
         toolExecution.setParameterValues(parameterValues);
-        toolExecution = this.toolExecutionRepository.save(toolExecution);
+        toolExecution = this.toolExecutionRepository.saveAndFlush(toolExecution);
 
         TypeFactory typeFactory = this.objectMapper.getTypeFactory();
         MapType mapType = typeFactory.constructMapType(HashMap.class, String.class, Object.class);
@@ -81,7 +81,7 @@ public class ToolExecutionTaskFactory {
         ProgressUpdater progressUpdater = new ToolExecutionProgressUpdater(toolExecution, this.toolExecutionRepository);
 
         ToolExecutionTask toolTask = new ToolExecutionTask(jstacsTool, parameterSet, protocol, progressUpdater,
-                resultDirectoryPath, storageService);
+                resultDirectoryPath, storageService, toolExecution);
         return toolTask;
     }
 

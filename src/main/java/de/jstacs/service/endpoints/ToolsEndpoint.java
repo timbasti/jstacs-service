@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.jstacs.service.data.entities.Application;
 import de.jstacs.service.data.entities.Tool;
+import de.jstacs.service.data.repositories.ApplicationRepository;
 import de.jstacs.service.data.repositories.ToolRepository;
 import de.jstacs.service.data.responsemappings.ToolOverview;
 import de.jstacs.service.data.responsemappings.ToolValues;
@@ -27,6 +29,7 @@ public class ToolsEndpoint {
 
     private final ToolRepository toolRepository;
     private final ToolLoader toolLoader;
+    private final ApplicationRepository applicationRepository;
 
     @GetMapping
     public List<ToolOverview> listTools() {
@@ -47,6 +50,25 @@ public class ToolsEndpoint {
         JstacsTool runnableTool = this.toolLoader.load(tool.getType());
         ToolParameterSet parameterSet = runnableTool.getToolParameters();
         ToolValues toolValues = new ToolValues(tool, parameterSet);
+        return toolValues;
+    }
+
+    @GetMapping("{applicationId}/{toolId}")
+    public ToolValues loadTool(@PathVariable Long applicationId, @PathVariable Long toolId)
+            throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException,
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        Application application = this.applicationRepository.findById(applicationId).get();
+        Tool tool = this.toolRepository.findById(toolId).get();
+        List<Tool> assignedTools = application.getTools();
+        ToolValues toolValues = new ToolValues();
+        for (Tool assignedTool : assignedTools) {
+            if (assignedTool.getId().equals(tool.getId())) {
+                JstacsTool runnableTool = this.toolLoader.load(assignedTool.getType());
+                ToolParameterSet parameterSet = runnableTool.getToolParameters();
+                toolValues.setTool(assignedTool);
+                toolValues.setParameters(parameterSet);
+            }
+        }
         return toolValues;
     }
 

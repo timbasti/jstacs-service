@@ -5,12 +5,14 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderColumn;
+import javax.persistence.UniqueConstraint;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,11 +37,12 @@ public class Application {
     @Column(unique = true)
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "Application_Tools", joinColumns = @JoinColumn(name = "application_id"), inverseJoinColumns = @JoinColumn(name = "tool_id"))
     @Getter
     @Setter
     @OrderColumn
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "Application_Tools", joinColumns = @JoinColumn(name = "application_id"), inverseJoinColumns = @JoinColumn(name = "tool_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+            "application_id", "tool_id" }))
     private List<Tool> tools = new ArrayList<Tool>();
 
 }
