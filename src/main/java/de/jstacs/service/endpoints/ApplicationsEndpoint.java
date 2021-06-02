@@ -2,7 +2,6 @@ package de.jstacs.service.endpoints;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +18,6 @@ import de.jstacs.service.data.entities.Tool;
 import de.jstacs.service.data.repositories.ApplicationRepository;
 import de.jstacs.service.data.repositories.ToolRepository;
 import de.jstacs.service.data.requestmappings.ApplicationValues;
-import de.jstacs.service.services.ToolLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

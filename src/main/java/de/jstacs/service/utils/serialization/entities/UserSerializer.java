@@ -24,12 +24,7 @@ public class UserSerializer extends JsonSerializer<User> {
         jsonGenerator.writeStringField("id", userId);
         jsonGenerator.writeArrayFieldStart("toolExecutions");
         for (ToolExecution toolExecution : toolExecutions) {
-            jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField("id", toolExecution.getId());
-            jsonGenerator.writeStringField("name", toolExecution.getName());
-            jsonGenerator.writeStringField("state", toolExecution.getState().name());
-            jsonGenerator.writeStringField("toolName", toolExecution.getTool().getName());
-            jsonGenerator.writeEndObject();
+            jsonGenerator.writeObject(toolExecution);
         }
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
