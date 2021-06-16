@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import org.springframework.boot.jackson.JsonComponent;
 
-import de.jstacs.DataType;
 import de.jstacs.parameters.Parameter;
 import de.jstacs.parameters.ParameterSet;
 import de.jstacs.parameters.SelectionParameter;
