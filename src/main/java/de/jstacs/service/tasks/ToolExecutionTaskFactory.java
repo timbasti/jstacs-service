@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
@@ -13,7 +12,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import de.jstacs.DataType;
 import de.jstacs.parameters.AbstractSelectionParameter;
@@ -30,6 +28,7 @@ import de.jstacs.service.storage.StorageService;
 import de.jstacs.service.utils.toolexecution.ToolExecutionProgressUpdater;
 import de.jstacs.service.utils.toolexecution.ToolExecutionProtocol;
 import de.jstacs.service.utils.toolexecution.ToolExecutionState;
+import de.jstacs.tools.DataColumnParameter;
 import de.jstacs.tools.JstacsTool;
 import de.jstacs.tools.ProgressUpdater;
 import de.jstacs.tools.Protocol;
@@ -39,7 +38,6 @@ import lombok.RequiredArgsConstructor;
 
 @SuppressWarnings({ "unchecked" })
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class ToolExecutionTaskFactory {
 
@@ -86,14 +84,13 @@ public class ToolExecutionTaskFactory {
     }
 
     private void updateParameterSet(ParameterSet parameterSet, Map<String, Object> values) throws Exception {
-
         int numberOfParameters = parameterSet.getNumberOfParameters();
         for (int i = 0; i < numberOfParameters; i++) {
             Parameter parameter = parameterSet.getParameterAt(i);
             String parameterName = parameter.getName();
-            Object newValue = values.get(parameterName);
+            Object currentValue = values.get(parameterName);
 
-            if (newValue == null) {
+            if (currentValue == null) {
                 if (parameter.isRequired() && parameter.getValue() == null) {
                     throw new Exception("Missing value for required parameter: " + parameterName);
                 } else {
@@ -101,11 +98,13 @@ public class ToolExecutionTaskFactory {
                 }
             }
 
-            this.updateParameterValue(parameter, newValue);
-            if (parameter instanceof AbstractSelectionParameter && parameter.getDatatype() == DataType.PARAMETERSET) {
-                Map<String, Object> selectionParameterValues = (Map<String, Object>) newValue;
+            this.updateParameterValue(parameter, currentValue);
+            String parameterType = parameter.getClass().getName();
+            if (parameterType == "de.jstacs.parameters.SelectionParameter" && parameter.getDatatype() == DataType.PARAMETERSET) {
+                Map<String, Object> selectionParameterValues = (Map<String, Object>) currentValue;
+                Object selectedName = selectionParameterValues.keySet().toArray()[0];
                 Map<String, Object> parameterSetValues = (Map<String, Object>) selectionParameterValues
-                        .get("parameterSetValues");
+                    .get(selectedName);
                 ParameterSet selectedParameterSet = (ParameterSet) parameter.getValue();
                 this.updateParameterSet(selectedParameterSet, parameterSetValues);
             }
@@ -113,10 +112,15 @@ public class ToolExecutionTaskFactory {
     }
 
     private void updateParameterValue(Parameter parameter, Object newValue) throws IllegalValueException, IOException {
-        if (parameter instanceof AbstractSelectionParameter) {
-            Map<String, Object> selectionParameterValues = (Map<String, Object>) newValue;
-            String selectedName = (String) selectionParameterValues.get("selected");
-            parameter.setValue(selectedName);
+        String parameterType = parameter.getClass().getName();
+        if (parameterType == "de.jstacs.parameters.SelectionParameter") {
+            if (parameter.getDatatype() == DataType.PARAMETERSET) {
+                Map<String, Object> selectionParameterValues = (Map<String, Object>) newValue;
+                Object selectedName = selectionParameterValues.keySet().toArray()[0];
+                parameter.setValue(selectedName);
+            } else {
+                parameter.setValue(newValue);
+            }
         } else if (parameter instanceof FileParameter) {
             Map<String, Object> fileParameterValues = (Map<String, Object>) newValue;
             String fileName = (String) fileParameterValues.get("name");

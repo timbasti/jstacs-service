@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import org.springframework.boot.jackson.JsonComponent;
 
+import de.jstacs.service.data.entities.Tool;
 import de.jstacs.service.data.entities.ToolExecution;
 
 @JsonComponent
@@ -17,27 +18,27 @@ public class ToolExecutionSerializer extends JsonSerializer<ToolExecution> {
 
     @Override
     public void serialize(ToolExecution toolExecution, JsonGenerator jsonGenerator, SerializerProvider serializers) throws IOException {
-        String executionId = toolExecution.getId();
-        String name = toolExecution.getName();
-        String parameterValues = toolExecution.getParameterValues();
-        Double progress = toolExecution.getProgress();
-        String protocol = toolExecution.getProtocol();
         String[] results = toolExecution.getResults();
         String state = toolExecution.getState().name();
         Date createdAtDate = toolExecution.getCreatedAt();
-        String notes = toolExecution.getNotes();
+        Tool tool = toolExecution.getTool();
 
         jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField("id", executionId);
-        jsonGenerator.writeStringField("name", name);
-        jsonGenerator.writeStringField("parameterValues", parameterValues);
-        jsonGenerator.writeNumberField("progress", progress);
-        jsonGenerator.writeStringField("protocol", protocol);
+        jsonGenerator.writeStringField("id", toolExecution.getId());
+        jsonGenerator.writeStringField("name", toolExecution.getName());
+        jsonGenerator.writeStringField("parameterValues", toolExecution.getParameterValues());
+        jsonGenerator.writeNumberField("progress", toolExecution.getProgress());
+        jsonGenerator.writeStringField("protocol", toolExecution.getProtocol());
         jsonGenerator.writeFieldName("results");
         jsonGenerator.writeArray(results, 0, results.length);
         jsonGenerator.writeStringField("state", state);
         jsonGenerator.writeStringField("createdAt", DateFormat.getInstance().format(createdAtDate));
-        jsonGenerator.writeStringField("notes", notes);
+        jsonGenerator.writeStringField("notes", toolExecution.getNotes());
+        jsonGenerator.writeFieldName("tool");
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeNumberField("id", tool.getId());
+        jsonGenerator.writeStringField("name", tool.getName());
+        jsonGenerator.writeEndObject();
         jsonGenerator.writeEndObject();
     }
     

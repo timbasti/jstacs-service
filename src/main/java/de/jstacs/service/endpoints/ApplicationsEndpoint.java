@@ -2,7 +2,6 @@ package de.jstacs.service.endpoints;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.jstacs.service.data.entities.Application;
@@ -19,11 +19,12 @@ import de.jstacs.service.data.entities.Tool;
 import de.jstacs.service.data.repositories.ApplicationRepository;
 import de.jstacs.service.data.repositories.ToolRepository;
 import de.jstacs.service.data.requestmappings.ApplicationValues;
-import de.jstacs.service.services.ToolLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5000", "https://jstacs-online.herokuapp.com" })
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5000",
+        "https://jstacs-online.herokuapp.com" }, methods = { RequestMethod.OPTIONS, RequestMethod.GET,
+                RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.HEAD })
 @RestController
 @RequestMapping("applications")
 @RequiredArgsConstructor

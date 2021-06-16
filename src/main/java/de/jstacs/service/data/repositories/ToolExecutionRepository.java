@@ -14,4 +14,6 @@ public interface ToolExecutionRepository extends JpaRepository<ToolExecution, St
 
     List<ToolExecution> findAllByUserAndTool(User user, Tool tool);
 
+    List<ToolExecution> findAllByUserAndToolOrderByCreatedAtDesc(User user, Tool tool);
+
 }
