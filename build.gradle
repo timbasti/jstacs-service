@@ -12,6 +12,11 @@ group = 'de.jstacs'
 version = '1.0.0-SNAPSHOT'
 sourceCompatibility = '11'
 
+bootJar {     
+    archiveBaseName = 'app'
+	archiveFileName = "${archiveBaseName.get()}.${archiveExtension.get()}"
+}
+
 repositories {
 	mavenCentral()
 }
@@ -74,11 +79,8 @@ classes {
 
 // To deploy on heroku
 task stage(type: Copy, dependsOn: [clean, bootJar]) {
-    from jar.archivePath
+    from bootJar.archivePath
     into project.rootDir 
-    rename {
-        'app.jar'
-    }
     mustRunAfter clean
 }
 
