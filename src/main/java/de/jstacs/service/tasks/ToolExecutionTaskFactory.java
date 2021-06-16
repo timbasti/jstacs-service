@@ -14,7 +14,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import de.jstacs.DataType;
-import de.jstacs.parameters.AbstractSelectionParameter;
 import de.jstacs.parameters.FileParameter;
 import de.jstacs.parameters.Parameter;
 import de.jstacs.parameters.ParameterSet;
@@ -28,7 +27,6 @@ import de.jstacs.service.storage.StorageService;
 import de.jstacs.service.utils.toolexecution.ToolExecutionProgressUpdater;
 import de.jstacs.service.utils.toolexecution.ToolExecutionProtocol;
 import de.jstacs.service.utils.toolexecution.ToolExecutionState;
-import de.jstacs.tools.DataColumnParameter;
 import de.jstacs.tools.JstacsTool;
 import de.jstacs.tools.ProgressUpdater;
 import de.jstacs.tools.Protocol;
