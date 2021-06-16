@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ToolExecutionTask implements Callable<String[]> {
-    
+
     @Getter
     private final ToolParameterSet toolParameterSet;
 
@@ -73,11 +73,10 @@ public class ToolExecutionTask implements Callable<String[]> {
         resultSaver.writeOutput(toolResult, resultsDir);
 
         List<String> resultFiles = new ArrayList<String>();
-        for (File file : resultsDir.listFiles()) {
-            String filePath = file.toPath().toString();
-            Path filePathInStorage = this.storageService.locate(filePath);
+        Files.walk(resultsDirPath).filter(Files::isRegularFile).forEach((filePath) -> {
+            Path filePathInStorage = this.storageService.locate(filePath.toString());
             resultFiles.add(filePathInStorage.toString());
-        }
+        });
 
         log.debug("Finished execution of " + this.jstacsTool.getToolName());
         return resultFiles.toArray(new String[] {});

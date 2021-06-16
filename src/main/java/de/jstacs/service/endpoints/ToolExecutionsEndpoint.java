@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -34,7 +35,9 @@ import de.jstacs.tools.ToolParameterSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5000", "https://jstacs-online.herokuapp.com" })
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5000",
+        "https://jstacs-online.herokuapp.com" }, methods = { RequestMethod.OPTIONS, RequestMethod.GET,
+                RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.HEAD })
 @RestController
 @RequestMapping("tool-executions")
 @RequiredArgsConstructor
@@ -69,7 +72,7 @@ public class ToolExecutionsEndpoint {
             @RequestHeader("user-id") String userId) throws Exception {
         Tool tool = this.toolRepository.findById(toolId).get();
         User user = this.userRepository.findById(userId).get();
-        List<ToolExecution> toolExecutions = this.toolExecutionRepository.findAllByUserAndTool(user, tool);
+        List<ToolExecution> toolExecutions = this.toolExecutionRepository.findAllByUserAndToolOrderByCreatedAtDesc(user, tool);
         return toolExecutions;
     }
 

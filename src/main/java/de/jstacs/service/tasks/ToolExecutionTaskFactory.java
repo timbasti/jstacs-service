@@ -84,7 +84,6 @@ public class ToolExecutionTaskFactory {
     }
 
     private void updateParameterSet(ParameterSet parameterSet, Map<String, Object> values) throws Exception {
-
         int numberOfParameters = parameterSet.getNumberOfParameters();
         for (int i = 0; i < numberOfParameters; i++) {
             Parameter parameter = parameterSet.getParameterAt(i);
@@ -100,10 +99,12 @@ public class ToolExecutionTaskFactory {
             }
 
             this.updateParameterValue(parameter, currentValue);
-            if (parameter instanceof AbstractSelectionParameter && parameter.getDatatype() == DataType.PARAMETERSET) {
+            String parameterType = parameter.getClass().getName();
+            if (parameterType == "de.jstacs.parameters.SelectionParameter" && parameter.getDatatype() == DataType.PARAMETERSET) {
                 Map<String, Object> selectionParameterValues = (Map<String, Object>) currentValue;
+                Object selectedName = selectionParameterValues.keySet().toArray()[0];
                 Map<String, Object> parameterSetValues = (Map<String, Object>) selectionParameterValues
-                        .get("parameterSetValues");
+                    .get(selectedName);
                 ParameterSet selectedParameterSet = (ParameterSet) parameter.getValue();
                 this.updateParameterSet(selectedParameterSet, parameterSetValues);
             }
@@ -111,11 +112,15 @@ public class ToolExecutionTaskFactory {
     }
 
     private void updateParameterValue(Parameter parameter, Object newValue) throws IllegalValueException, IOException {
-        System.out.println(">>>>>>>>" + parameter.toString());
-        if (parameter instanceof AbstractSelectionParameter || parameter instanceof DataColumnParameter) {
-            Map<String, Object> selectionParameterValues = (Map<String, Object>) newValue;
-            Object selectedName = selectionParameterValues.get("selected");
-            parameter.setValue(selectedName);
+        String parameterType = parameter.getClass().getName();
+        if (parameterType == "de.jstacs.parameters.SelectionParameter") {
+            if (parameter.getDatatype() == DataType.PARAMETERSET) {
+                Map<String, Object> selectionParameterValues = (Map<String, Object>) newValue;
+                Object selectedName = selectionParameterValues.keySet().toArray()[0];
+                parameter.setValue(selectedName);
+            } else {
+                parameter.setValue(newValue);
+            }
         } else if (parameter instanceof FileParameter) {
             Map<String, Object> fileParameterValues = (Map<String, Object>) newValue;
             String fileName = (String) fileParameterValues.get("name");

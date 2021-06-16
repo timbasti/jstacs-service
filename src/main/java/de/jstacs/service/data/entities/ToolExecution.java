@@ -8,6 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderBy;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -37,7 +38,7 @@ public class ToolExecution {
     @NonNull
     @Getter
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Tool tool;
 
     @NonNull
