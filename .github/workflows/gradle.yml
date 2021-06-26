@@ -14,6 +14,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   REGISTRY_USERNAME: ${{ github.actor }}
   REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  REGISTRY_URL: https://${{ env.REGISTRY }}
 
 jobs:
   build:
@@ -29,4 +30,4 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew bootBuildImage --publishImage --imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} --debug
+      run: ./gradlew bootBuildImage --publishImage --imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
