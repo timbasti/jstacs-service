@@ -1,8 +1,8 @@
 plugins {
-    id "com.github.ben-manes.versions" version '0.39.0'
+	id "com.github.ben-manes.versions" version '0.39.0'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'org.springframework.boot' version '2.5.1'
-    id "io.freefair.lombok" version "5.3.0"
+	id "io.freefair.lombok" version "5.3.0"
 	id 'org.asciidoctor.jvm.convert' version '3.3.2'
 	id 'java'
 	id 'war'
@@ -13,8 +13,19 @@ version = '1.0.0-SNAPSHOT'
 sourceCompatibility = '11'
 
 bootJar {     
-    archiveBaseName = 'app'
+   	archiveBaseName = 'app'
 	archiveFileName = "${archiveBaseName.get()}.${archiveExtension.get()}"
+}
+
+bootBuildImage {
+	imageName = "jstacs.de/${project.name}:${project.version}"
+	docker {
+		publishRegistry {
+			username = "$System.env.REGISTRY_USERNAME"
+			token = "$System.env.REGISTRY_TOKEN"
+			url = "$System.env.REGISTRY_URL"
+		}
+	}
 }
 
 repositories {
@@ -30,7 +41,7 @@ configurations {
 	runtimeClasspath {
 		extendsFrom developmentOnly
 	}
-    asciidoctorExtensions
+	asciidoctorExtensions
 }
 
 dependencies {
@@ -38,7 +49,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'com.cedarsoftware:json-io:4.12.0'
 	implementation 'com.google.guava:guava:30.1.1-jre'
-    implementation 'org.apache.tika:tika-core:1.25'
+   	implementation 'org.apache.tika:tika-core:1.25'
 	implementation 'org.reflections:reflections:0.9.12'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -56,36 +67,36 @@ test {
 }
 
 asciidoctor {
-    configurations 'asciidoctorExtensions'
+	configurations 'asciidoctorExtensions'
 	sourceDir  file('src/docs')
 	outputDir  file('build/docs')
 	dependsOn test
 }
 
 task createProperties(dependsOn: processResources) {
-  doLast {
-    new File("$buildDir/resources/main/service.properties").withWriter { w ->
-        Properties p = new Properties()
-        p['version'] = project.version.toString()
-		p['name'] = project.name.toString()
-        p.store w, null
-    }
-  }
+	doLast {
+		new File("$buildDir/resources/main/service.properties").withWriter { w ->
+			Properties p = new Properties()
+			p['version'] = project.version.toString()
+			p['name'] = project.name.toString()
+			p.store w, null
+		}
+	}
 }
 
 classes {
-    dependsOn createProperties
+	dependsOn createProperties
 }
 
 // To deploy on heroku
 task stage(type: Copy, dependsOn: [clean, bootJar]) {
-    from bootJar.archivePath
-    into project.rootDir 
-    mustRunAfter clean
+	from bootJar.archivePath
+	into project.rootDir 
+	mustRunAfter clean
 }
 
 clean {
-    doLast {
-        project.file('app.jar').delete()
-    }
+	doLast {
+		project.file('app.jar').delete()
+	}
 }
