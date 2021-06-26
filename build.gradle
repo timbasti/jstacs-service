@@ -22,7 +22,7 @@ bootBuildImage {
 	docker {
 		publishRegistry {
 			username = "$System.env.REGISTRY_USERNAME"
-			token = "$System.env.REGISTRY_TOKEN"
+			password = "$System.env.REGISTRY_TOKEN"
 			url = "$System.env.REGISTRY_URL"
 		}
 	}
