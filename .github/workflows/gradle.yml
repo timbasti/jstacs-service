@@ -14,7 +14,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   REGISTRY_USERNAME: ${{ github.actor }}
   REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  REGISTRY_URL: https://${{ env.REGISTRY }}
+  REGISTRY_URL: https://ghcr.io/
 
 jobs:
   build:
