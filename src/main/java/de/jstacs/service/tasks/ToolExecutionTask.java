@@ -60,7 +60,6 @@ public class ToolExecutionTask implements Callable<String[]> {
     public String[] call() throws Exception {
         log.debug("Starting execution of " + this.jstacsTool.getToolName());
         ToolResult toolResult = this.jstacsTool.run(this.toolParameterSet, this.protocol, this.progressUpdater, 1);
-        ResultSetResultSaver.register();
         ResultSaver<ToolResult> resultSaver = ResultSaverLibrary.getSaver(toolResult.getClass());
         Path resultsDirPath = Files.createDirectories(this.resultDirectoryPath);
         File resultsDir = resultsDirPath.toFile();
