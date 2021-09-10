@@ -1,0 +1,14 @@
+# If there are issues with postgres and the db folder:
+#  - PGDATA=/var/lib/postgresql/data/pgdata
+version: "3.9"
+services:
+  db:
+    image: postgres:alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - $PWD/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=jstacs-online
+      - POSTGRES_USER=janed
+      - POSTGRES_PASSWORD=admin
