@@ -9,7 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
+
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
 import de.jstacs.service.utils.toolexecution.ToolExecutionState;
 import lombok.Getter;
@@ -18,6 +23,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+@TypeDefs({
+    @TypeDef(
+        name = "string-array",
+        typeClass = StringArrayType.class
+    )
+})
 @Entity
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -28,10 +39,12 @@ public class ToolExecution {
     @Setter
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "execution_id")
     private String id;
 
     @Getter
     @Setter
+    @Column(name = "execution_name")
     private String name = "";
 
     @NonNull
@@ -48,12 +61,12 @@ public class ToolExecution {
 
     @Getter
     @Setter
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     private String notes = "";
 
     @Getter
     @Setter
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     private String parameterValues = "{}";
 
     @Getter
@@ -66,12 +79,13 @@ public class ToolExecution {
 
     @Getter
     @Setter
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "text")
     private String protocol = "";
 
     @Getter
     @Setter
-    @Column(columnDefinition = "BLOB")
+    @Type(type = "string-array")
+    @Column(columnDefinition = "text[]")
     private String[] results = {};
 
     @Getter

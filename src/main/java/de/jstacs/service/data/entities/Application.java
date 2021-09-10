@@ -29,12 +29,13 @@ public class Application {
     @GeneratedValue
     @Getter
     @Setter
+    @Column(name = "application_id")
     private Long id;
 
     @NonNull
     @Getter
     @Setter
-    @Column(unique = true)
+    @Column(name = "application_name", unique = true)
     private String name;
 
     @Getter
