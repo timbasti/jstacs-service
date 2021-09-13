@@ -1,5 +1,6 @@
 package de.jstacs.service.storage;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import lombok.Data;
@@ -13,7 +14,8 @@ public class StorageProperties {
     /**
      * Root folder location for storing files
      */
-    private final String rootLocation = "files";
+    @Value("${files.root.location}")
+    private String rootLocation;
 
     /**
      * Folder location for storing results
