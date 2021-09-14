@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 
 public interface StorageService {
 
+	Path getRootLocation();
+
 	void init();
 
 	Path store(MultipartFile file);

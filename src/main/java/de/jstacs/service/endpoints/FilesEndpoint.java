@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import de.jstacs.service.storage.StorageProperties;
 import de.jstacs.service.storage.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,11 +38,13 @@ public class FilesEndpoint {
 
     private final StorageService storageService;
 
+    private final StorageProperties storageProperties;
+
     @PostMapping
     public Map<String, String> saveFile(@RequestParam("file") MultipartFile file,
             @RequestParam("toolExecutionId") String toolExecutionId, @RequestHeader("user-id") String userId) {
         Map<String, String> response = new HashMap<String, String>();
-        Path destinationDirectory = Paths.get(userId, toolExecutionId);
+        Path destinationDirectory = Paths.get(userId, toolExecutionId, this.storageProperties.getInputsLocation());
         Path filePath = storageService.store(file, destinationDirectory);
         log.debug("Stored file: " + filePath.toString());
         response.put("fileName", filePath.toString());

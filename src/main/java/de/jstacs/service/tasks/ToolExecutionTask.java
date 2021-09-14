@@ -3,13 +3,13 @@ package de.jstacs.service.tasks;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import de.jstacs.results.savers.ResultSaver;
 import de.jstacs.results.savers.ResultSaverLibrary;
-import de.jstacs.results.savers.ResultSetResultSaver;
 import de.jstacs.service.data.entities.ToolExecution;
 import de.jstacs.service.storage.StorageService;
 import de.jstacs.tools.JstacsTool;
@@ -35,20 +35,20 @@ public class ToolExecutionTask implements Callable<String[]> {
 
     private final ProgressUpdater progressUpdater;
 
-    private final Path resultDirectoryPath;
-
     private final StorageService storageService;
 
+    private final String resultsLocation;
+
     public ToolExecutionTask(final JstacsTool jstacsTool, final ToolParameterSet toolParameterSet,
-            final Protocol protocol, final ProgressUpdater progressUpdater, final Path resultDirectoryPath,
-            final StorageService storageService, final ToolExecution toolExecution) {
+            final Protocol protocol, final ProgressUpdater progressUpdater, final StorageService storageService,
+            final ToolExecution toolExecution, final String resultsLocation) {
         this.jstacsTool = jstacsTool;
         this.toolParameterSet = toolParameterSet;
         this.protocol = protocol;
         this.progressUpdater = progressUpdater;
-        this.resultDirectoryPath = resultDirectoryPath;
         this.storageService = storageService;
         this.toolExecution = toolExecution;
+        this.resultsLocation = resultsLocation;
         log.debug("Created ToolTask for: " + jstacsTool.getToolName());
     }
 
@@ -61,7 +61,12 @@ public class ToolExecutionTask implements Callable<String[]> {
         log.debug("Starting execution of " + this.jstacsTool.getToolName());
         ToolResult toolResult = this.jstacsTool.run(this.toolParameterSet, this.protocol, this.progressUpdater, 1);
         ResultSaver<ToolResult> resultSaver = ResultSaverLibrary.getSaver(toolResult.getClass());
-        Path resultsDirPath = Files.createDirectories(this.resultDirectoryPath);
+
+        String rootLocationFileName = this.storageService.getRootLocation().toString();
+        String userId = this.toolExecution.getUser().getId();
+        String toolExecutionId = this.toolExecution.getId();
+        Path resultDirectoryPath = Paths.get(rootLocationFileName, userId, toolExecutionId, resultsLocation);
+        Path resultsDirPath = Files.createDirectories(resultDirectoryPath);
         File resultsDir = resultsDirPath.toFile();
 
         File[] oldFiles = resultsDir.listFiles();

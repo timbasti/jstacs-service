@@ -28,6 +28,11 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
+    public Path getRootLocation() {
+        return this.rootLocation;
+    }
+
+    @Override
     public Path store(MultipartFile file) {
         return this.store(file, Paths.get("temp"));
     }

@@ -8,22 +8,26 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-@ConfigurationProperties("storage")
+@ConfigurationProperties("file.storage")
 public class StorageProperties {
 
     /**
      * Root folder location for storing files
      */
-    @Value("${files.root.location}")
     private String rootLocation;
 
     /**
      * Folder location for storing results
      */
-    private final String resultsLocation = "results";
+    private String resultsLocation;
 
     /**
      * Folder location for storing defaults
      */
-    private final String defaultsLocation = "defaults";
+    private String defaultsLocation;
+
+    /**
+     * Folder location for storing input files
+     */
+    private String inputsLocation;
 }

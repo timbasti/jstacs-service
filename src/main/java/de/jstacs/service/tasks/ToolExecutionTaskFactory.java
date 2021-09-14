@@ -1,8 +1,6 @@
 package de.jstacs.service.tasks;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +51,8 @@ public class ToolExecutionTaskFactory {
         ToolExecution toolExecution = this.toolExecutionRepository.findById(toolExecutionId).get();
 
         if (toolExecution.getState() != ToolExecutionState.INITIALIZED) {
-            throw new TaskAlreadyRunningException("State of given ToolExecution is not INITIALIZED. Task already started.");
+            throw new TaskAlreadyRunningException(
+                    "State of given ToolExecution is not INITIALIZED. Task already started.");
         }
 
         toolExecution.setParameterValues(parameterValues);
@@ -68,16 +67,13 @@ public class ToolExecutionTaskFactory {
         ToolParameterSet parameterSet = jstacsTool.getToolParameters();
         this.updateParameterSet(parameterSet, deserializedValues);
 
-        String rootLocation = this.storageProperties.getRootLocation();
         String resultsLocation = this.storageProperties.getResultsLocation();
-        Path resultDirectoryPath = Paths.get(rootLocation, toolExecution.getUser().getId(), toolExecutionId,
-                resultsLocation);
 
         Protocol protocol = new ToolExecutionProtocol(toolExecution, this.toolExecutionRepository);
         ProgressUpdater progressUpdater = new ToolExecutionProgressUpdater(toolExecution, this.toolExecutionRepository);
 
         ToolExecutionTask toolTask = new ToolExecutionTask(jstacsTool, parameterSet, protocol, progressUpdater,
-                resultDirectoryPath, storageService, toolExecution);
+                storageService, toolExecution, resultsLocation);
         return toolTask;
     }
 
@@ -98,11 +94,12 @@ public class ToolExecutionTaskFactory {
 
             this.updateParameterValue(parameter, currentValue);
             String parameterType = parameter.getClass().getName();
-            if (parameterType == "de.jstacs.parameters.SelectionParameter" && parameter.getDatatype() == DataType.PARAMETERSET) {
+            if (parameterType == "de.jstacs.parameters.SelectionParameter"
+                    && parameter.getDatatype() == DataType.PARAMETERSET) {
                 Map<String, Object> selectionParameterValues = (Map<String, Object>) currentValue;
                 Object selectedName = selectionParameterValues.keySet().toArray()[0];
                 Map<String, Object> parameterSetValues = (Map<String, Object>) selectionParameterValues
-                    .get(selectedName);
+                        .get(selectedName);
                 ParameterSet selectedParameterSet = (ParameterSet) parameter.getValue();
                 this.updateParameterSet(selectedParameterSet, parameterSetValues);
             }
@@ -133,45 +130,45 @@ public class ToolExecutionTaskFactory {
     private void updatePrimitiveParameterValue(Parameter parameter, Object newValue) throws IllegalValueException {
         DataType dataType = parameter.getDatatype();
         switch (dataType) {
-            case CHAR:
-            case STRING:
-                parameter.setValue((String) newValue);
-                break;
-            case BOOLEAN:
-                parameter.setValue((Boolean) newValue);
-                break;
-            case BYTE: {
-                Number numberValue = (Number) newValue;
-                parameter.setValue(numberValue.byteValue());
-                break;
-            }
-            case SHORT: {
-                Number numberValue = (Number) newValue;
-                parameter.setValue(numberValue.shortValue());
-                break;
-            }
-            case INT: {
-                Number numberValue = (Number) newValue;
-                parameter.setValue(numberValue.intValue());
-                break;
-            }
-            case LONG: {
-                Number numberValue = (Number) newValue;
-                parameter.setValue(numberValue.longValue());
-                break;
-            }
-            case FLOAT: {
-                Number numberValue = (Number) newValue;
-                parameter.setValue(numberValue.floatValue());
-                break;
-            }
-            case DOUBLE: {
-                Number numberValue = (Number) newValue;
-                parameter.setValue(numberValue.doubleValue());
-                break;
-            }
-            default:
-                parameter.setValue(newValue);
+        case CHAR:
+        case STRING:
+            parameter.setValue((String) newValue);
+            break;
+        case BOOLEAN:
+            parameter.setValue((Boolean) newValue);
+            break;
+        case BYTE: {
+            Number numberValue = (Number) newValue;
+            parameter.setValue(numberValue.byteValue());
+            break;
+        }
+        case SHORT: {
+            Number numberValue = (Number) newValue;
+            parameter.setValue(numberValue.shortValue());
+            break;
+        }
+        case INT: {
+            Number numberValue = (Number) newValue;
+            parameter.setValue(numberValue.intValue());
+            break;
+        }
+        case LONG: {
+            Number numberValue = (Number) newValue;
+            parameter.setValue(numberValue.longValue());
+            break;
+        }
+        case FLOAT: {
+            Number numberValue = (Number) newValue;
+            parameter.setValue(numberValue.floatValue());
+            break;
+        }
+        case DOUBLE: {
+            Number numberValue = (Number) newValue;
+            parameter.setValue(numberValue.doubleValue());
+            break;
+        }
+        default:
+            parameter.setValue(newValue);
         }
     }
 
