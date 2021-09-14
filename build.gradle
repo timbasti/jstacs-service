@@ -29,6 +29,7 @@ bootBuildImage {
 			url = "$System.env.REGISTRY_URL"
 		}
 	}
+	builder = "paketobuildpacks/builder:full"
 }
 
 repositories {
