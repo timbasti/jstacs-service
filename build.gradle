@@ -29,7 +29,7 @@ bootBuildImage {
 			url = "$System.env.REGISTRY_URL"
 		}
 	}
-	builder = "paketobuildpacks/builder:full"
+	builder = "paketobuildpacks/builder:tiny"
 }
 
 repositories {
